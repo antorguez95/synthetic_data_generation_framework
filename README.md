@@ -3,7 +3,7 @@
 ## What's in this repository?
 
 This repository contains the code of our published work in the Journal of Biomedical and Health informatics: "Synthetic Patient Data Generation and 
-Evaluation in Disease Prediction Using Small and Imbalanced Datasets". Please cite this paper when using this framework. 
+Evaluation in Disease Prediction Using Small and Imbalanced Datasets". Please cite this paper if this framework somehow help you in your research and/or development work.
 
 This framework is entirely developed in Python language. In 
 
@@ -33,5 +33,9 @@ in your conda prompt.
 ## Generated results
 
 Each database has its correspondant script. The execution of each of them will generate a `results` and  `EDA` folders that contain the results after data augmentation and an initial Exploratory Data Analysis (EDA), respectively. Results are stored as figures or as `.pkl` files containing the numerical values of the metrics analysed. Please, refer to ######PAPER###### for further information. 
+
+## Learn more 
+
+For any other questions related with the code you can post an issue on this repository or contact us sending an email
 
 
