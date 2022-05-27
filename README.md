@@ -32,7 +32,7 @@ in your conda prompt.
 
 ## Generated results
 
-Each database has its correspondant script. The execution of each of them will generate a `results` and  `EDA` folders that contain the results after data augmentation and an initial Exploratory Data Analysis (EDA), respectively. Results are stored as figures or as `.pkl` files containing the numerical values of the metrics analysed. Please, refer to ######PAPER###### for further information. 
+Each database has its correspondant script. The execution of each of them will generate a `results` and  `EDA` folders that contain the results after data augmentation and an initial Exploratory Data Analysis (EDA), respectively. Results are stored as figures or as `.pkl` files containing the numerical values of the metrics analysed. Please, refer to ######PAPER###### for further information regarding the studied metrics and obtained results. 
 
 ## Learn more 
 
