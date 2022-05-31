@@ -9,7 +9,7 @@ import openpyxl
 
 from sklearn.preprocessing import OneHotEncoder
 
-def prepare_ALZ_RED(dataset_path : str = "", filename : str = "") :
+def prepare_ALZ_RED(dataset_path : str = "", filename1 : str = "", filename2 : str = "") :
     """Read the Alzheimer-Balea-Reduced dataset from a .xlsx file and suit it to be processed 
     as a pd.DataFrame. It returns tha dataset dataframe and strings associated to 
     it to easy its management.
@@ -32,37 +32,48 @@ def prepare_ALZ_RED(dataset_path : str = "", filename : str = "") :
     os.chdir(dataset_path)
 
     # Open the Excel file 
-    bd = openpyxl.load_workbook(filename)
+    bd1 = openpyxl.load_workbook(filename1)
+    bd2 = openpyxl.load_workbook(filename2)
 
     # Load the useful information of the Excel file 
-    sheet = bd['Tesis definitiva']
-    
-    # Convert sheet into DataFrame 
-    data = pd.DataFrame(sheet.values)
-    
-    # Fix data properly in the dataframe 
-    tags = data.iloc[0]
-    data.columns = tags
+    sheet1 = bd1['Grupo 1']
+    sheet2 = bd2['Grupo 2']
 
-    # Drop useless rows and columns 
-    data = data.drop(index = [0,86,87,88,89,90]) 
-    data.reset_index(drop=True, inplace=True)
-    data = data.drop(['Grupo','ID','Pfeiffer','Comentario', 'HiperEspectMIC', 'HiperEspectMAC'], axis=1)
+    # Convert sheet into DataFrame 
+    data1 = pd.DataFrame(sheet1.values)
+    data2 = pd.DataFrame(sheet2.values)
+
+    # Fix data properly in the dataframe 
+    tags1 = data1.iloc[0]
+    data1.columns = tags1
+    tags2 = data2.iloc[0]
+    data2.columns = tags2
+
+    # Drop first row, that contains the column names 
+    data1 = data1.drop(index = [0])
+    data2 = data2.drop(index = [0])
 
     # Replace "NULL" values by a integer to be handled later 
-    data = data.replace(to_replace = "#NULL!", value = 99999)
+    data1 = data1.replace(to_replace = "#NULL!", value = 99999)
+    data2 = data2.replace(to_replace = "#NULL!", value = 99999)
+
+    # Joint dataframes 
+    frames = [data1, data2]
+    data = pd.concat(frames)
+
+    # Shuffle dataset to mix both subdatasets
+    data = data.sample(frac=1)
+
+    # Swap last column ('ERC') with prior column (target variable) to follow convention
+    target = data[['TNC']]
+    data = data.drop(columns=['TNC'])
+    data['TNC'] = target 
 
     # Store features' and target variable's names 
     cols_names_prev = data.columns
     y_tag = cols_names_prev[len(cols_names_prev)-1]
     cols_names = cols_names_prev[0:cols_names_prev.size]
     
-    # Substitute value of 6 (non-existant) in AntNeurol by 99999, as if it was "NULL"
-    data['AntNeurolog'][61] = 99999
-
-    # Drop those rows which has the output 'TNeurolog' equals to 99999 (NULL)
-    data = data[data['TNeurocog'] < 2]
-
     # Save X, Y, feature names and Y name 
     y_tag = cols_names[len(cols_names)-1]
     cols_names = cols_names[0:len(cols_names)-1]
@@ -72,7 +83,7 @@ def prepare_ALZ_RED(dataset_path : str = "", filename : str = "") :
     return data, X, Y, cols_names, y_tag
 
 def numerical_conversion(data : np.array, features : str, y_col : str):
-    """Fix all Alzheimer-Balea database features data types to its original type after KNNImputer is used,
+    """Fix all Alzheimer-Balea reduces database features data types to its original type after KNNImputer is used,
     since this functions returns only a floating points ndarray. For more, check sklearn 
     documentation of this function at
     https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html. After 
@@ -98,43 +109,13 @@ def numerical_conversion(data : np.array, features : str, y_col : str):
     # Fixing necessary datatypes to int (including categorical variables)
     data['Edad'] = data['Edad'].astype(int)
     data['Sexo'] = data['Sexo'].astype(int)
-    data['EstCivil'] = data['EstCivil'].astype(int)
-    data['ActLaboral'] = data['ActLaboral'].astype(int)
-    data['FormatConvivencia'] = data['FormatConvivencia'].astype(int)
-    data['NivelEducativo'] = data['NivelEducativo'].astype(int)
-    data['ActIntelectual'] = data['ActIntelectual'].astype(int)
-    data['RelSociales'] = data['RelSociales'].astype(int)
-    data['AntPsiquia'] = data['AntPsiquia'].astype(int)
-    data['AntCardiologi'] = data['AntCardiologi'].astype(int)
-    data['AntNeurolog'] = data['AntNeurolog'].astype(int)
-    data['AntRenal'] = data['AntRenal'].astype(int)
-    data['AntPulmonar'] = data['AntPulmonar'].astype(int)
-    data['AntDemencia'] = data['AntDemencia'].astype(int)
-    data['Tabaco'] = data['Tabaco'].astype(int)
-    data['Alcohol'] = data['Alcohol'].astype(int)
-    data['HTAanterior'] = data['HTAanterior'].astype(int)
-    data['TAS'] = data['TAS'].astype(int)
-    data['TAD'] = data['TAD'].astype(int)
+    data['Convivencia'] = data['Convivencia'].astype(int)
+    data['HTA'] = data['HTA'].astype(int)
     data['DM'] = data['DM'].astype(int)
-    data['Barthel'] = data['Barthel'].astype(int)
-    data['Hb'] = data['Hb'].astype(float)
-    data['VCM'] = data['VCM'].astype(float)
-    data['HCM'] = data['HCM'].astype(float)
-    data['Plaquetas'] = data['Plaquetas'].astype(int)
-    data['Leucocitos'] = data['Leucocitos'].astype(float)
-    data['VCM'] = data['VCM'].astype(float)
-    data['Neutrófilos'] = data['Neutrófilos'].astype(float)
-    data['Linfocitos'] = data['Linfocitos'].astype(float)
-    data['Monocitos'] = data['Monocitos'].astype(float)
-    data['Glucosa'] = data['Glucosa'].astype(int)
-    data['Creatinina'] = data['Creatinina'].astype(float)
-    data['FG'] = data['FG'].astype(float)
-    data['Na'] = data['Na'].astype(int)
-    data['K'] = data['K'].astype(float)
-    data['ALT'] = data['ALT'].astype(float)
-    data['Colesterol'] = data['Colesterol'].astype(int)
-    data['LDL'] = data['LDL'].astype(int)
-    data['TNeurocog'] = data['TNeurocog'].astype(int)
+    data['DLP'] = data['DLP'].astype(int)
+    data['Depresión'] = data['Depresión'].astype(int)
+    data['ERC'] = data['ERC'].astype(int)
+    data['TNC'] = data['TNC'].astype(int)
 
     # Separate X and Y 
     X = data[features]
@@ -143,7 +124,7 @@ def numerical_conversion(data : np.array, features : str, y_col : str):
     return data, X, y
 
 def general_conversion (data : pd.DataFrame) :
-    """Fix all Alzheimer-Balea database features data types to its original type.
+    """Fix all Alzheimer-Balea Reduced database features data types to its original type.
     Categorical variables are set as "object" type. A DataFrame with the original 
     datatypes of this database is returned.
 
@@ -158,51 +139,20 @@ def general_conversion (data : pd.DataFrame) :
             data: dataframe with the original datatypes 
     """
     data['Edad'] = data['Edad'].astype(int)
-    data['Sexo'] = data['Sexo'].astype('object')
-    data['EstCivil'] = data['EstCivil'].astype('object')
-    data['ActLaboral'] = data['ActLaboral'].astype('object')
-    data['FormatConvivencia'] = data['FormatConvivencia'].astype('object')
-    data['NivelEducativo'] = data['NivelEducativo'].astype('object')
-    data['ActIntelectual'] = data['ActIntelectual'].astype('object')
-    data['RelSociales'] = data['RelSociales'].astype('object')
-    data['AntPsiquia'] = data['AntPsiquia'].astype('object')
-    data['AntNeurolog'] = data['AntNeurolog'].astype('object')
-    data['AntRenal'] = data['AntRenal'].astype('object')
-    data['AntPulmonar'] = data['AntPulmonar'].astype('object')
-    data['AntDemencia'] = data['AntDemencia'].astype('object')
-    data['Tabaco'] = data['Tabaco'].astype('object')
-    data['Alcohol'] = data['Alcohol'].astype('object')
-    data['AntPsiquia'] = data['AntPsiquia'].astype('object')
-    data['AntCardiologi'] = data['AntCardiologi'].astype('object')
-    data['HTAanterior'] = data['HTAanterior'].astype(int)
-    data['TAS'] = data['TAS'].astype(int)
-    data['TAD'] = data['TAD'].astype(int)
+    data['Sexo'] = data['Sexo'].astype(int)
+    data['Convivencia'] = data['Convivencia'].astype('object')
+    data['HTA'] = data['HTA'].astype(int)
     data['DM'] = data['DM'].astype(int)
-    data['Barthel'] = data['Barthel'].astype(int)
-    data['Hb'] = data['Hb'].astype(float)
-    data['VCM'] = data['VCM'].astype(float)
-    data['HCM'] = data['HCM'].astype(float)
-    data['Plaquetas'] = data['Plaquetas'].astype(int)
-    data['Leucocitos'] = data['Leucocitos'].astype(float)
-    data['VCM'] = data['VCM'].astype(float)
-    data['Neutrófilos'] = data['Neutrófilos'].astype(float)
-    data['Linfocitos'] = data['Linfocitos'].astype(float)
-    data['Monocitos'] = data['Monocitos'].astype(float)
-    data['Glucosa'] = data['Glucosa'].astype(int)
-    data['Creatinina'] = data['Creatinina'].astype(float)
-    data['FG'] = data['FG'].astype(float)
-    data['Na'] = data['Na'].astype(int)
-    data['K'] = data['K'].astype(float)
-    data['ALT'] = data['ALT'].astype(float)
-    data['Colesterol'] = data['Colesterol'].astype(int)
-    data['LDL'] = data['LDL'].astype(int)
-    data['TNeurocog'] = data['TNeurocog'].astype(int)
+    data['DLP'] = data['DLP'].astype(int)
+    data['Depresión'] = data['Depresión'].astype(int)
+    data['ERC'] = data['ERC'].astype(int)
+    data['TNC'] = data['TNC'].astype(int)
     
     return data
 
 def replacement(data : pd.DataFrame):
     """This function replaces the numerical values corresponding to categories in 
-    the Alzheimer-Balea database by its correspondant category. It returns a DataFrame
+    the Alzheimer-Balea-Red database by its correspondant category. It returns a DataFrame
     after this replacement.
 
     Args:
@@ -213,34 +163,7 @@ def replacement(data : pd.DataFrame):
     --------
             data: dataframe with the categories represented by their correspondant string  
     """
-    data['Sexo']  = data['Sexo'].replace([1,2],['Varon', 'Mujer'])
-    data['EstCivil']  = data['EstCivil'].replace([1,2,3,4],['Solteria', 'Matrimonio', 
-                                                                        'Viudedad', 'Divorcio'])
-    data['ActLaboral']  = data['ActLaboral'].replace([1,2,3,4],['Cualificado', 'No cualificado', 
-                                                                        'Empresario', 'Ama de casa'])
-    data['FormatConvivencia']  = data['FormatConvivencia'].replace([1,2,3,4],['Convivencia Conyuge', 'Convivencia Solo', 
-                                                                        'Convivencia Hijos_Familiares', 'Convivencia Residencia'])
-    data['NivelEducativo']  = data['NivelEducativo'].replace([1,2,3,4],['Sin estudios', 'Estudios primarios', 
-                                                                        'Estudios medios', 'Estudios universitarios'])
-    data['ActIntelectual']  = data['ActIntelectual'].replace([1,2,3],['+10 libros/año', '5-10 libros/año', 
-                                                                        'Lectura escasa'])
-    data['RelSociales']  = data['RelSociales'].replace([1,2,3],['Relsociales Buenas', 'Relsociales Normales',
-                                                                             'Relsociales Inexistentes'])
-    data['AntPsiquia']  = data['AntPsiquia'].replace([1,2,3],['Psiquia Depresion', 'Psiquia Otros antecedentes', 'Psiquia Sin antecedentes'])
-    data['AntCardiologi']  = data['AntCardiologi'].replace([1,2,3,4],['Cardio Isquemica', 'Cardio FA',
-                                                                            'Cardio otras','Cardio Sin antecedentes'])
-    data['AntNeurolog'] = data['AntNeurolog'].replace([1,2,3,4,5],['Neuro Ictus', 'Neuro Cefalea', 'Neuro Traumatismo',
-                                                                            'Neuro Epilepsia','Neuro Sin antecedentes'])
-    data['AntRenal'] = data['AntRenal'].replace([1,2,3],['Renal ERC', 'Renal Otras', 'Renal Sin Patologias'])
-    data['AntPulmonar'] = data['AntPulmonar'].replace([1,2,3,4],['Pulmonar EPOC', 'Pulmonar Cancer', 
-                                                                             'Pulmonar Otras','Pulmonar Sin Patologias'])
-    data['AntDemencia'] = data['AntDemencia'].replace([1,2,3],['Demencia Padres', 'Demencia otros', 
-                                                                             'Demencia Sin Antecedentes'])
-    data['Tabaco'] = data['Tabaco'].replace([1,2],['Ex/Fumador', 'No Fumador'])
-    data['Alcohol'] = data['Alcohol'].replace([1,2,3,4],['Alcohol Elevado', 'Alcohol Moderado',
-                                                                           'Alcohol leve', 'Alcohol nunca'])
-    data['HTAanterior'] = data['HTAanterior'].replace([1,2],[1,0]) 
-    data['DM'] = data['DM'].replace([1,2],[1,0])
+    data['Convivencia']  = data['Convivencia'].replace([1,2,3],['conv_1', 'conv_2', 'conv_3'])
     
     return data 
 
@@ -261,313 +184,66 @@ def one_hot_enc(data):
     
     # One-hot Encoder declaration 
     enc = OneHotEncoder(handle_unknown='ignore')
-    # Sexo
-    cats = ['Varon', 'Mujer']
-    data[['Sexo']] = data[['Sexo']].astype('category')
-    sexo = pd.DataFrame(enc.fit_transform(data[['Sexo']]).toarray())
-    sexo.columns = enc.categories_
-    for name in cats:
-        if name not in sexo:
-            sexo[name] = 0
-    sexo = sexo[['Varon', 'Mujer']]
-    sexo.reset_index(drop=True, inplace=True)
-    # Estado Civil
-    cats = ['Solteria', 'Matrimonio', 'Viudedad', 'Divorcio']
-    data[['EstCivil']] = data[['EstCivil']].astype('category')
-    civil = pd.DataFrame(enc.fit_transform(data[['EstCivil']]).toarray())
-    civil.columns = enc.categories_
-    for name in cats:
-        if name not in civil:
-            civil[name] = 0 
-    civil = civil[['Solteria', 'Matrimonio', 'Viudedad', 'Divorcio']]        
-    civil.reset_index(drop=True, inplace=True)
-    # Actividad laboral
-    cats = ['Cualificado', 'No cualificado','Empresario', 'Ama de casa']
-    data[['ActLaboral']] = data[['ActLaboral']].astype('category')
-    laboral = pd.DataFrame(enc.fit_transform(data[['ActLaboral']]).toarray())
-    laboral.columns = enc.categories_
-    for name in cats:
-        if name not in laboral:
-            laboral[name] = 0    
-    laboral = laboral[['Cualificado', 'No cualificado','Empresario', 'Ama de casa']]
-    laboral.reset_index(drop=True, inplace=True)
-    # Formato Convivencia 
-    cats = ['Convivencia Conyuge', 'Convivencia Solo','Convivencia Hijos_Familiares',
-            'Convivencia Residencia']
-    data[['FormatConvivencia']] = data[['FormatConvivencia']].astype('category')
-    convi = pd.DataFrame(enc.fit_transform(data[['FormatConvivencia']]).toarray())
+    # Convivencia 
+    cats = ['conv_1', 'conv_2', 'conv_3']
+    data[['Convivencia']] = data[['Convivencia']].astype('category')
+    convi = pd.DataFrame(enc.fit_transform(data[['Convivencia']]).toarray())
     convi.columns = enc.categories_
     for name in cats:
         if name not in convi:
             convi[name] = 0    
-    convi = convi[['Convivencia Conyuge', 'Convivencia Solo','Convivencia Hijos_Familiares',
-            'Convivencia Residencia']]
+    convi = convi[['conv_1', 'conv_2', 'conv_3']]
     convi.reset_index(drop=True, inplace=True)
-    # Nivel educativo 
-    cats = ['Sin estudios', 'Estudios primarios','Estudios medios', 'Estudios universitarios']
-    data[['NivelEducativo']] = data[['NivelEducativo']].astype('category')
-    educ = pd.DataFrame(enc.fit_transform(data[['NivelEducativo']]).toarray())
-    educ.columns = enc.categories_
-    for name in cats:
-        if name not in educ:
-            educ[name] = 0    
-    educ = educ[['Sin estudios', 'Estudios primarios','Estudios medios', 'Estudios universitarios']]
-    educ.reset_index(drop=True, inplace=True)
-    # Acitividad intelectual  
-    cats = ['+10 libros/año', '5-10 libros/año', 'Lectura escasa']
-    data[['ActIntelectual']] = data[['ActIntelectual']].astype('category')
-    intec = pd.DataFrame(enc.fit_transform(data[['ActIntelectual']]).toarray())
-    intec.columns = enc.categories_
-    for name in cats:
-        if name not in intec:
-            intec[name] = 0    
-    intec = intec[['+10 libros/año', '5-10 libros/año', 'Lectura escasa']]
-    intec.reset_index(drop=True, inplace=True)
-    # Relaciones sociales
-    cats = ['Relsociales Buenas', 'Relsociales Normales','Relsociales Inexistentes']
-    data[['RelSociales']] = data[['RelSociales']].astype('category')
-    rels = pd.DataFrame(enc.fit_transform(data[['RelSociales']]).toarray())
-    rels.columns = enc.categories_
-    for name in cats:
-        if name not in rels:
-            rels[name] = 0    
-    rels = rels[['Relsociales Buenas', 'Relsociales Normales','Relsociales Inexistentes']]
-    rels.reset_index(drop=True, inplace=True)
-    # Psiquiatria 
-    cats = ['Psiquia Depresion', 'Psiquia Otros antecedentes', 'Psiquia Sin antecedentes']
-    data[['AntPsiquia']] = data[['AntPsiquia']].astype('category')
-    psiq = pd.DataFrame(enc.fit_transform(data[['AntPsiquia']]).toarray())
-    psiq.columns = enc.categories_
-    for name in cats:
-        if name not in psiq:
-            psiq[name] = 0    
-    psiq = psiq[['Psiquia Depresion', 'Psiquia Otros antecedentes', 'Psiquia Sin antecedentes']]
-    psiq.reset_index(drop=True, inplace=True)
-    # Cardiologia 
-    cats = ['Cardio Isquemica', 'Cardio FA','Cardio otras','Cardio Sin antecedentes']
-    data[['AntCardiologi']] = data[['AntCardiologi']].astype('category')
-    card = pd.DataFrame(enc.fit_transform(data[['AntCardiologi']]).toarray())
-    card.columns = enc.categories_
-    for name in cats:
-        if name not in card:
-            card[name] = 0    
-    card = card[['Cardio Isquemica', 'Cardio FA','Cardio otras','Cardio Sin antecedentes']]
-    card.reset_index(drop=True, inplace=True)
-    # Neurologia
-    cats = ['Neuro Ictus', 'Neuro Cefalea', 'Neuro Traumatismo','Neuro Epilepsia','Neuro Sin antecedentes']
-    data[['AntNeurolog']] = data[['AntNeurolog']].astype('category')
-    neur = pd.DataFrame(enc.fit_transform(data[['AntNeurolog']]).toarray())
-    neur.columns = enc.categories_
-    for name in cats:
-        if name not in neur:
-            neur[name] = 0    
-    neur = neur[['Neuro Ictus', 'Neuro Cefalea', 'Neuro Traumatismo','Neuro Epilepsia',
-                 'Neuro Sin antecedentes']]
-    neur.reset_index(drop=True, inplace=True)
-    # Renal
-    cats = ['Renal ERC', 'Renal Otras', 'Renal Sin Patologias']
-    data[['AntRenal']] = data[['AntRenal']].astype('category')
-    ren = pd.DataFrame(enc.fit_transform(data[['AntRenal']]).toarray())
-    ren.columns = enc.categories_
-    for name in cats:
-        if name not in ren:
-            ren[name] = 0    
-    ren = ren[['Renal ERC', 'Renal Otras', 'Renal Sin Patologias']]
-    ren.reset_index(drop=True, inplace=True)
-    # Pulmonar
-    cats = ['Pulmonar EPOC', 'Pulmonar Cancer','Pulmonar Otras','Pulmonar Sin Patologias']
-    data[['AntRenal']] = data[['AntRenal']].astype('category')
-    pulm = pd.DataFrame(enc.fit_transform(data[['AntPulmonar']]).toarray())
-    pulm.columns = enc.categories_
-    for name in cats:
-        if name not in pulm:
-            pulm[name] = 0    
-    pulm = pulm[['Pulmonar EPOC', 'Pulmonar Cancer','Pulmonar Otras','Pulmonar Sin Patologias']]
-    pulm.reset_index(drop=True, inplace=True)
-    # Demencia 
-    cats = ['Demencia Padres', 'Demencia otros', 'Demencia Sin Antecedentes']
-    data[['AntDemencia']] = data[['AntDemencia']].astype('category')
-    dem = pd.DataFrame(enc.fit_transform(data[['AntDemencia']]).toarray())
-    dem.columns = enc.categories_
-    for name in cats:
-        if name not in dem:
-            dem[name] = 0    
-    dem = dem[['Demencia Padres', 'Demencia otros', 'Demencia Sin Antecedentes']]
-    dem.reset_index(drop=True, inplace=True)
-    # Tabaco 
-    cats = ['Ex/Fumador', 'No Fumador']
-    data[['Tabaco']] = data[['Tabaco']].astype('category')
-    tab = pd.DataFrame(enc.fit_transform(data[['Tabaco']]).toarray())
-    tab.columns = enc.categories_
-    for name in cats:
-        if name not in tab:
-            tab[name] = 0    
-    tab = tab[['Ex/Fumador', 'No Fumador']]
-    tab.reset_index(drop=True, inplace=True)
-    # Alcohol 
-    cats = ['Alcohol Elevado', 'Alcohol Moderado','Alcohol leve', 'Alcohol nunca']
-    data[['Alcohol']] = data[['Alcohol']].astype('category')
-    alc = pd.DataFrame(enc.fit_transform(data[['Alcohol']]).toarray())
-    alc.columns = enc.categories_
-    for name in cats:
-        if name not in alc:
-            alc[name] = 0    
-    alc = alc[['Alcohol Elevado', 'Alcohol Moderado','Alcohol leve', 'Alcohol nunca']]
-    alc.reset_index(drop=True, inplace=True)
     
     # Drop column to add it at the end 
-    affected = data[['TNeurocog']]
+    affected = data[['TNC']]
     affected.reset_index(drop=True, inplace=True)
     
     # Drop original categorical columns
-    data = data.drop(['Sexo', 'EstCivil', 'ActLaboral','FormatConvivencia',
-                                'NivelEducativo', 'ActIntelectual', 'RelSociales','AntPsiquia',
-                                'AntCardiologi','AntNeurolog','AntRenal','AntPulmonar',
-                                'AntDemencia','Tabaco','Alcohol','TNeurocog'], axis=1)
+    data = data.drop(['Convivencia', 'TNC'], axis=1)
     data.reset_index(drop=True, inplace=True)
     
-    data = pd.concat([data, sexo, civil, laboral,
-                                  convi, educ, intec,
-                                  rels, psiq, card, neur, ren,
-                                  pulm, dem, tab, alc,
-                                  affected],axis=1)
+    data = pd.concat([data, convi, affected],axis=1)
+    
     return data
 
 # Dictionary to specify fields of synthetic data for Alzheimer-Balea database
-alz_fields = {
+alz_red_fields = {
+    'Sexo' : {
+        'type' : 'numerical',
+        'subtype' : 'integer'
+    },
     'Edad' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'Sexo' : {
+    'Convivencia' : {
         'type' : 'categorical'
     },
-    'EstCivil' : {
-        'type' : 'categorical'
-    },
-    'ActLaboral' : {
-        'type' : 'categorical'
-    },
-    'FormatConvivencia' : {
-        'type' : 'categorical'
-    },
-    'NivelEducativo' : {
-        'type' : 'categorical'
-    },
-    'ActIntelectual' : {
-        'type' : 'categorical'
-    },
-    'RelSociales' : {
-        'type' : 'categorical'
-    },
-    'AntPsiquia' : {
-        'type' : 'categorical'
-    },
-    'AntCardiologi' : {
-        'type' : 'categorical'
-    },
-    'AntNeurolog' : {
-        'type' : 'categorical'
-    },
-    'AntRenal' : {
-        'type' : 'categorical'
-    },
-    'AntPulmonar' : {
-        'type' : 'categorical'
-    },
-    'AntDemencia' : {
-        'type' : 'categorical'
-    },
-    'Tabaco' : {
-        'type' : 'categorical'
-    },
-    'Alcohol' : {
-        'type' : 'categorical'
-    },
-    'HTAanterior' : {
+    'HTA' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'TAS' : {
-        'type' : 'numerical',
-        'subtype' : 'integer'
-    },
-    'TAD' : {
-        'type' : 'numerical',
-        'subtype' : 'integer'
-    }, 
     'DM' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'Barthel' : {
+    'DLP' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'Hb' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    }, 
-    'VCM' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'HCM' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'Plaquetas' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'Leucocitos' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'Neutrófilos' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'Linfocitos' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'Monocitos' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'Glucosa' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'Creatinina' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'FG' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'Na' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'K' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'ALT' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'LDL' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'TNeurocog' : {
+    'Depresión' : {
         'type' : 'numerical',
         'subtype' : 'integer'
-    },   
+    },
+    'ERC' : {
+        'type' : 'numerical',
+        'subtype' : 'integer'
+    },
+    'TNC' : {
+        'type' : 'numerical',
+        'subtype' : 'integer'
+    },
  }
 
 # Custom variable constraints to generate synthetic data 
@@ -598,42 +274,14 @@ constraints = [
                 ]
 
 # Distributions for each field (all set to univariate)
-alz_distributions = {
-    'Grupo' : 'univariate',#'gamma',
-    'Edad' : 'univariate', #'gaussian',
-    'EstCivil' : 'univariate', #'gaussian',
-    'Actlaboral' : 'univariate', #'gaussian',
-    'FormatConvivencia' : 'univariate', #'gamma',
-    'NivelEducativo' : 'univariate', #'gaussian',
-    'ActIntelectual' : 'univariate', #'gamma',
-    'RelSociales' : 'univariate', #'gamma',
-    'AntCardiologi' : 'univariate', #'gaussian',
-    'AntNeurolog' : 'univariate', #'gaussian',
-    'AntRenal' : 'univariate', #'gaussian',
-    'AntPulmonar' : 'univariate', #'gaussian',
-    'AntDemencia' : 'univariate', #'gaussian',
-    'Tabaco' : 'univariate', #'gaussian',
-    'Alcohol' : 'univariate', #'gaussian',
-    'HTAanterior' : 'univariate', #'gaussian',
-    'TAS' : 'univariate', #'gaussian',
-    'TAD' : 'univariate', #'gaussian',
-    'DM' : 'univariate', #'gaussian',
-    'Barthel' : 'univariate', #'gaussian',
-    'Hb' : 'univariate', #'gaussian',
-    'VCM' : 'univariate', #'gaussian',
-    'HCM' : 'univariate', #'gaussian',
-    'Plaquetas' : 'univariate', #'gaussian',
-    'Leucocitos' : 'univariate', #'gaussian',
-    'Neutrófilos' : 'univariate', #'gaussian',
-    'Linfocitos' : 'univariate', #'gaussian',
-    'Monocitos' : 'univariate', #'gaussian',
-    'Glucosa' : 'univariate', #'gaussian',
-    'Creatinina' : 'univariate', #'gaussian',
-    'FG' : 'univariate', #'gaussian',
-    'Na' : 'univariate', #'gaussian',
-    'K' : 'univariate', #'gaussian',
-    'ALT' : 'univariate', #'gaussian',
-    'Colesterol' : 'univariate', #'gaussian',
-    'LDL' : 'univariate', #'gaussian',
-    'TNeurocog' : 'univariate', #'gaussian',   
+alz_red_distributions = {
+    'Sexo' : 'univariate',
+    'Edad' : 'univariate', 
+    'Convivencia' : 'univariate', 
+    'HTA' : 'univariate', 
+    'DM' : 'univariate', 
+    'DLP' : 'univariate', 
+    'Depresión' : 'univariate', 
+    'ERC' : 'univariate', 
+    'TNC' : 'univariate', 
     }  

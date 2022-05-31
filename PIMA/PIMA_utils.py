@@ -137,15 +137,15 @@ pima_fields = {
 
 # Custom variable constraints to generate synthetic data 
 constraints = [ 
-                Positive('Pregnancies',handling_strategy='reject_sampling'),
-                Positive('Glucose',handling_strategy='reject_sampling'),
-                Positive('BloodPressure',handling_strategy='reject_sampling'),
-                Positive('SkinThickness',handling_strategy='reject_sampling'), 
-                Positive('Insulin',handling_strategy='reject_sampling'),
-                Positive('BMI',handling_strategy='reject_sampling'),
-                Positive('DiabetesPedigreeFunction',handling_strategy='reject_sampling'),
-                Positive('Age',handling_strategy='reject_sampling'),
-                Binary('Outcome',handling_strategy='reject_sampling')
+                # Positive('Pregnancies',handling_strategy='reject_sampling'),
+                # Positive('Glucose',handling_strategy='reject_sampling'),
+                # Positive('BloodPressure',handling_strategy='reject_sampling'),
+                # Positive('SkinThickness',handling_strategy='reject_sampling'), 
+                # Positive('Insulin',handling_strategy='reject_sampling'),
+                # Positive('BMI',handling_strategy='reject_sampling'),
+                # Positive('DiabetesPedigreeFunction',handling_strategy='reject_sampling'),
+                # Positive('Age',handling_strategy='reject_sampling'),
+                # Binary('Outcome',handling_strategy='reject_sampling')
                ]
 
 # Distributions for each field (all set to univariate)

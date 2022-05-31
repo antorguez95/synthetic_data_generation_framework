@@ -34,27 +34,127 @@ from model_evaluation import *
 
 import pickle
 
-# Save working directory to return to it 
-wd = os.getcwd()
-print(wd)
-# Declare dataset path and get into it
+#########################################################################################################
+#########################################################################################################
+#########################################################################################################
+####################################      ARGUMENTS       ##############################################
+# Dataset path
 DATASET_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\Bases de datos\Chronic Kidney Disease - UCI\Chronic_Kidney_Disease"
-
-os.chdir(DATASET_PATH)
 
 # File name 
 filename = "kidney_disease.csv"
 
+# Dataset name
+dataset_name = 'KidneyChronic'
+
+# Path to store obtained reusults
+STORE_PATH = r".\results"
+
+# Flag: set to True if Balancng evaluation has been done. To True if has been not.
+BALANCING_CHECKED = False 
+
+# Balancing methods list. For some databases, balancing algorithm may give an error, 
+# or has no sense to test is (i.e., SMOTE-NC with a dataset without categorical variables).
+# In those cases, replace that value with "None". Order must be always: 
+# ["ADASYN", "SMOTE", "SMOTENC", "KMeansSMOTE", "SVMSMOTE", "BorderlineSMOTE"].
+# Check "balancing_eval()" function for more. 
+bal_methods = ["ADASYN", "SMOTE", "SMOTENC", "KMeansSMOTE", "SVMSMOTE", "BorderlineSMOTE"]
+
+# Best balancing algorithms for the given dataset. After balancing evaluation is done, 
+# fill these values properly. This strings must correspond to the methods that generates
+# X_balance1 and X_balance2.
+balance1 = "ADASYN"
+balance2 = "Borderline"
+
+# Strings that contain the names of the augmentation methods. This is fixed in this framework 
+augmen1 = "CTGAN"
+augmen2 = "GC"
+
+# Set number of iterations to be done for the balancing evaluation 
+bal_iterations = 100
+
+# Number of iterations to evaluate the process of data augmentation 
+aug_iterations = 10
+
+# ML Classifiers and their correspondant hyperparameters. If one wants to add any ML classifiers,
+# their hyperparameters must be added to. Besides, code in this main file must be added. 'CTRL+F' and
+# type 'SVM', and replies that line of code with the new introduced model. 
+# SVM 
+svm_model = SVC(random_state = 12345, cache_size=200, max_iter = -1, probability=True)
+svm_params = {"kernel" : ['rbf', 'linear'],
+              "C" : [0.1, 1, 2.5, 5, 10],
+              "gamma" : [0.01, 0.1, 1, 10],
+              }
+
+# RF
+rf_params = {"n_estimators": [20, 50, 100, 200], 
+              "max_features": [2,3,5,7],
+              }     
+rf_model = RandomForestClassifier(random_state = 12345)
+
+# XGB 
+xgb_params = {"learning_rate": [0.01, 0.1, 0.5],
+              "n_estimators": [20, 50, 100, 200]
+              }
+xgb_model = GradientBoostingClassifier(random_state = 12345)
+
+# KNN
+knn_params = {"n_neighbors": [6,8,10,12,14,16],
+              "weights" : ['uniform','distance'],
+              }
+knn_model = KNeighborsClassifier(algorithm = 'auto', n_jobs = -1)
+
+# Strings to handle ML models and their correspondant colours to be plotted
+models = ['SVM','RF', 'XGB', 'KNN']
+model_colors = ['b','r','k','g']
+
+# List with the string keys to handle evaluated sizes. Changes here must correspont
+# with changes in "sizes_balance1" and "sizes_balance2" variables 
+sizes_keys = ["quarter", "half", "unit", "double", "quadruple", "only-synth"]
+
+# Studied statistical metrics. If metrics wants to be added, must be added in "sdg_utils.py" file. They should 
+# be implemented in the same part of the code as the rest are placed in this main.  
+mets = ["PCD","MMD","KLD"]
+
+# Studied classification metrics. To introduce more metrics, modify "model_evaluation.py" file
+class_metrics = ['acc', 'auc', 'f1'] 
+    
+# Chosen colors for each combinations
+ctgan_colors = ["k","r","g","b"]
+gc_colors = ["c","m","y","orange"]
+
+# Categorical features indexes
+cat_feat_idxs = [3,4,5,6,21]
+
+# Differentiating between categorical and numerical features. The former are 
+# one-hot encoded and the latter are standardized
+categorical_features = ['sg', 'al', 'su', 'rbc', 'pc', 'appet']
+numerical_features = ['age', 'bp', 'bgr', 'sc', 'sod', 'pot', 'hemo', 'pcv', 'wc', 'rc']
+
+####################################       END OF ARGUMENTS       #######################################
+#########################################################################################################
+#########################################################################################################
+#########################################################################################################
+
+####################################           MAIN BODY          #######################################
+
+# Save working directory to return to it 
+wd = os.getcwd()
+print(wd)
+
+os.chdir(DATASET_PATH)
+
 # Monitoring computational time 
 start = time.time()
 
+# Prepare Kidney-Chronic database to be handled
 data, X, Y, feat_names, y_tag = prepare_KidneyChronic(DATASET_PATH, filename)
 
 # Return from dataset directory to working directory 
 os.chdir(wd)
 
 # Exploratory Data Analysis
-#eda(data, X, Y, 'Early-DM')
+#eda(data, X, Y, dataset_name)
 
 # Data partition - Train (80%) + Validation (20%)
 X_train, X_val, y_train, y_val = train_test_split(X, Y, test_size=0.2, random_state=4)
@@ -86,8 +186,8 @@ cases = train_data.loc[(train_data[y_tag]==1)]
 train_ratio = (train_data[y_tag][train_data[y_tag] == 1].value_counts()[1])/(train_data[y_tag][train_data[y_tag] == 0].value_counts()[0])
 
 # Exploratory Data Analysis after KNN Imputation 
-# eda(train_data, X_train, y_train, 'PIMA', folder = r"./EDA_train")
-# eda(validation_data, X_val, y_val, 'PIMA', folder = r"./EDA_val")
+# eda(train_data, X_train, y_train, dataset_name, folder = r"./EDA_train")
+# eda(validation_data, X_val, y_val, dataset_name, folder = r"./EDA_val")
 
 # Data augmentation models: Balancing and Augmentation steps 
 # a) Balancing data 
@@ -95,34 +195,17 @@ train_ratio = (train_data[y_tag][train_data[y_tag] == 1].value_counts()[1])/(tra
 # Flag "CHECKED" should be set to True after evaluation has to skip the balancing evaluation
 # part once this step was performed 
 
-# Path to store obtained reusults
-STORE_PATH = r".\results"
-
-# Flag 
-BALANCING_CHECKED = False
-
-# Categorical features indexes
-cat_feat_idxs = [3,4,5,6,21]
-
-# Set number of iterations to be done for the balancing evaluation 
-iterations = 100
-
 # Balancing algorithms evaluation
 if BALANCING_CHECKED  == False : 
-    print("Balancing algorithms evaluation... %i iterations running" % iterations)
-    balancing_eval('KidneyChronic', X_train, y_train, train_data,
-                 feat_names, y_tag, ["ADASYN", "SMOTE", "SMOTENC", "KMeansSMOTE", "SVMSMOTE", "BorderlineSMOTE"], 
-                  cat_feat_idxs, filename = "balancing_metrics.csv" , iterations = iterations, store_path = STORE_PATH)
+    print("Balancing algorithms evaluation... %i iterations running" % bal_iterations)
+    balancing_eval(dataset_name, X_train, y_train, train_data,
+                 feat_names, y_tag, bal_methods, 
+                  cat_feat_idxs, filename = "balancing_metrics.csv" , iterations = bal_iterations, store_path = STORE_PATH)
 
 # In case balancing evaluation is not done, change directory
 else:
     os.chdir(STORE_PATH)
-
 #%% A) Data Balancing 
-# Strings of selected methods (after analaysing previous step results (i.e., balancing_eval())
-balance1 = "ADASYN"
-balance2 = "Borderline"
-
 X_balance1, y_balance1 = ADASYN(sampling_strategy = 'minority',
                                 random_state = None,
                                 n_neighbors = 5,
@@ -165,15 +248,14 @@ cases_balance2 = data_balance2.loc[(data_balance2[y_tag]==1)]
 # Validation (non-splitted)
 validation_data = general_conversion(validation_data)
 
-# Defining metadata for Early-DM database
+# Defining metadata for Kidney-Chronic disease database
 metadata = Metadata()
 metadata.add_table(
-    name = 'KidneyChronic',
+    name = dataset_name,
     data = train_data)
-    #fields_metadata = earlyDM_fields)
+    #fields_metadata = kidneyChronid_fields)
 
 # A) Gaussian Copula model
-#gc = GaussianCopula(table_metadata = metadata._metadata['tables']['EarlyDM']) 
 gc = GaussianCopula(field_types = kidneyChronic_fields, 
                     #constraints = constraints, 
                     field_distributions = kidneyChronic_distributions)
@@ -184,59 +266,11 @@ ctgan = CTGAN(field_types = kidneyChronic_fields,
 
 # Set conditions for synthetic generation 
 cond_positive = {
-    'classification': 1
+    y_tag: 1
     }
 cond_negative = {
-    'classification': 0
+    y_tag: 0
     }
-
-# Strings to generate files depending on the used synthetic data generation model 
-augmen1 = "CTGAN"
-augmen2 = "GC"
-
-# Number of iterations in the process of data augmentation 
-iterations = 1
-
-# Differentiating between categorical and numerical features. The former are 
-# one-hot encoded and the latter are standardized
-categorical_features = ['sg', 'al', 'su', 'rbc', 'pc', 'appet']
-numerical_features = ['age', 'bp', 'bgr', 'sc', 'sod', 'pot', 'hemo', 'pcv', 'wc', 'rc']
-
-# Machine Learning models and hyperparameters declaration 
-# SVM 
-svm_params = {"kernel" : ['rbf', 'linear'],
-              "C" : [0.1, 1, 2.5, 5, 10],
-              "gamma" : [0.01, 0.1, 1, 10],
-              }
-svm_params = {
-              "C" : [0.1],
-              }
-svm_model = SVC(random_state = 12345, cache_size=200, max_iter = -1, probability=True)
-
-# RF
-rf_params = {"n_estimators": [20, 50, 100, 200], 
-              "max_features": [2,3,5,7],
-              }  
-rf_params = {"n_estimators": [20], 
-              }
-rf_model = RandomForestClassifier(random_state = 12345)
-
-# XGB 
-xgb_params = {"learning_rate": [0.01, 0.1, 0.5],
-              "n_estimators": [20]
-              }
-xgb_params = {
-              "n_estimators": [20]
-              }
-xgb_model = GradientBoostingClassifier(random_state = 12345)
-
-# KNN
-knn_params = {"n_neighbors": [6,8,10,12,14,16],
-              "weights" : ['uniform','distance'],
-              }
-knn_params = {"n_neighbors": [6],
-              }
-knn_model = KNeighborsClassifier(algorithm = 'auto', n_jobs = -1)
 
 # Based on the original training data size, different amount of synthetic data is generated
 sizes_balance1 = [round(data_balance1.shape[0]/4), round(data_balance1.shape[0]/2), round(data_balance1.shape[0]), 
@@ -245,14 +279,6 @@ sizes_balance2 = [round(data_balance2.shape[0]/4), round(data_balance2.shape[0]/
          round(data_balance2.shape[0]*2), round(data_balance2.shape[0]*4), round(data_balance2.shape[0]*4)+20]
 sizes_only_augmen1 = [round(X_train.shape[0]/4), round(X_train.shape[0]/2), round(X_train.shape[0]), 
          round(X_train.shape[0]*2), round(X_train.shape[0]*4), round(data_balance2.shape[0]*4)+20]
-
-sizes_balance1 = [1000]
-sizes_balance2 = [1000]
-sizes_only_augmen1 = [1000]
-
-# List with the string keys to handle above values 
-sizes_keys = ["quarter", "half", "unit", "double", "quadruple", "only-synth"]
-sizes_keys = ["only-synth"]
 
 # Strings containing combinations of SDG (Synthetic Data Generators) 
 comb1 = ("%s + %s") % (balance1, augmen1)
@@ -270,9 +296,7 @@ comb10 = "Sep. + %s" % (augmen1)
 sdg_combinations = [comb1, comb2, comb3, comb4, comb5,
            comb6, comb7, comb8, comb9, comb10]
 
-class_metrics = ['acc', 'auc', 'f1']
-
-sdg_metrics, class_metrics, hyperparameters = get_eval_dictionaries(sdg_combinations, sizes_keys, class_metrics, iterations)
+sdg_metrics, class_metrics, hyperparameters = get_eval_dictionaries(sdg_combinations, sizes_keys, class_metrics, aug_iterations)
 
 # List of tuples containing combinations of balancing, augmenting methods and their associated strings
 # Non-splitting and no conditions tuples
@@ -344,7 +368,7 @@ siz.close()
 for i in range(len(sizes_keys)):
 
     # Different iterations to evaluate variability of iterations 
-    for j in range(iterations):
+    for j in range(aug_iterations):
           
         # Data augmentation WITHOUT splitting between controls and cases 
         for group in no_split : 
@@ -537,14 +561,8 @@ hp_dict.close()
 ctgan_combinations = [comb1, comb3, comb5, comb7]
 gc_combinations = [comb2, comb4, comb6, comb8]
        
-# Studied metrics
-mets = ["PCD","MMD","KLD"]
 sizes = sizes_balance1
 
-# Chosen colors for each combinations
-ctgan_colors = ["k","r","g","b"]
-gc_colors = ["c","m","y","orange"]
-    
 # Figure 
 fig, axs = plt.subplots(3,2)
     
@@ -642,15 +660,12 @@ axs[0,0].legend(ctgan_combinations, bbox_to_anchor=(-0.25,1.02,1,0.2), loc="lowe
 axs[0,1].legend(gc_combinations, bbox_to_anchor=(0,1.02,1,0.2), loc="lower left",
                 mode="None", borderaxespad=0, ncol=2, prop={'size': 4})
 
-plt.savefig('KidneyChronic_metrics_vs_synthetic_data_samples', dpi=600)
+name = dataset_name + "_metrics_vs_synthetic_data_samples"
+plt.savefig(name , dpi=600)
 
 # FIGURE II - F1-Score versus data samples (Best abd worst cases) 
 
 best_worst = ['ADASYN + Sep. + GC', 'Borderline + CTGAN'] 
-
-models = ['SVM','RF', 'XGB', 'KNN']
-
-model_colors = ['b','r','k','g']
 
 fig, ax = plt.subplots(2)
 
@@ -701,7 +716,8 @@ ax[1].axhline(y=rf_f1_nosynth, color='r', linestyle='--')
 ax[1].axhline(y=xgb_f1_nosynth, color='k', linestyle='--') 
 ax[1].axhline(y=knn_f1_nosynth, color='g', linestyle='--')              
 
-plt.savefig('KidneyChronic_f1_vs_data_samples', dpi = 600)
+name = dataset_name + "_f1_vs_data_samples"
+plt.savefig(name, dpi = 600)
 
 # FIGURE III: Metrics vs. F1-Score
 
@@ -760,4 +776,5 @@ ax[1].set_xticklabels([])
 ax[0].legend(models, bbox_to_anchor=(0.07,1.02,1,0.2), loc="lower left",
                 mode="None", borderaxespad=0, ncol=4, prop={'size': 6})
 # Save figure
-plt.savefig('KidneyChronic_sdg_metrics_vs_f1_score', dpi=600)
+name = dataset_name + "_sdg_metrics_vs_f1_score"
+plt.savefig(name, dpi=600)
