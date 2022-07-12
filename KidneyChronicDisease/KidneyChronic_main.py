@@ -1,4 +1,21 @@
-#%% Dependencies 
+# Copyright (C) 2022 Antonio Rodriguez
+# 
+# This file is part of synthetic_data_generation_framework.
+# 
+# synthetic_data_generation_framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# synthetic_data_generation_framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with synthetic_data_generation_framework.  If not, see <http://www.gnu.org/licenses/>.
+
+# Dependencies 
 import numpy as np 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -16,7 +33,7 @@ from imblearn.over_sampling import SMOTE, ADASYN, SMOTENC, KMeansSMOTE, SVMSMOTE
 
 from KidneyChronic_utils import *
 
-from exploratory_data_analysys import *
+from exploratory_data_analysis import *
 
 from sdg_utils import * 
 
