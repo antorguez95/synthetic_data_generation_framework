@@ -1,5 +1,5 @@
 # Project authors
 
-* Antonio Rodriguez-Almeida
+* Antonio J. Rodríguez-Almeida
     - aralmeida@iuma.ulpgc.es
     - Universidad de Las Palmas de Gran Canaria
