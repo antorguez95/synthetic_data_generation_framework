@@ -1,9 +1,28 @@
+# Copyright (C) 2022 Antonio Rodriguez
+# 
+# This file is part of synthetic_data_generation_framework.
+# 
+# synthetic_data_generation_framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# synthetic_data_generation_framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with synthetic_data_generation_framework.  If not, see <http://www.gnu.org/licenses/>.
+
 
 # Dependencies 
 import pandas as pd  
-import numpy as np  
 
-from typing import Callable, Tuple, Dict, List 
+import numpy as np 
+from numpy import linalg 
+
+from typing import Tuple, Dict, List 
 
 from imblearn.over_sampling  import ADASYN, SMOTE, SMOTENC, KMeansSMOTE, SVMSMOTE, BorderlineSMOTE
 
@@ -13,63 +32,179 @@ from sdv.constraints.base import Constraint
 from sdv.sampling import Condition 
 
 import scipy.stats
-import numpy as np
-
-from sklearn import base
 
 import pickle 
 
 import os
 
-def PCD(X, X_ref):
-      dif_corr = X.corr() - X_ref.corr()
-      from numpy import linalg
-      value = linalg.norm(dif_corr, ord = 'fro')
-      return value 
+def PCD(X : pd.DataFrame, X_ref : pd.DataFrame) -> float:
 
-def PMF(X):  
-  PMFs = {}
-  bases = {}
-  i = 0
-  for feature in X :
-    # calculate histograms
-    bins = np.arange(np.floor(X[feature].min()),np.ceil(X[feature].max()+0.01),step=0.1) 
-    value, base = np.histogram(X[feature], bins = bins, density = 1) 
-    bases[feature] = base
-    hist = scipy.stats.rv_histogram([value, base]) 
-    # Calculate PMF
-    PMFs[feature]= hist.pdf(base)
-    i = i+1
+    """ This function computes and return the Pairwise Correlation 
+    Difference (PCD). PCD formulation can be found in [1].
 
-  return PMFs, bases
+    Arguments:
+    ---------
+    X : features of the studied dataset 
+    X_ref : features of the reference dataset
+
+    Returns:
+    --------
+    pcd : pcd value
+
+    References: 
+    -----------
+    [1] Generation and evaluation of ______
+
+    """ 
+    
+    # Correlation difference
+    dif_corr = X.corr() - X_ref.corr()
+
+    # Frobenius norm of calculated difference 
+    pcd = linalg.norm(dif_corr, ord = 'fro')
+    
+    return pcd 
+
+def PMF(X : pd.DataFrame) -> Tuple[Dict, Dict]: 
+
+    """ This function computes the Probabilities Mass Function (PMF)
+    of all features of dataset X from their histograms.
+    As done in [1], PMF is computed to calculate the Kullback-Leibler
+    Divergence from the PMF. The function returns the PMFs and the bases
+    of the histograms for all features. These variables will be the input 
+    of the function that computes the KLD. 
+    
+    Arguments:
+    ---------
+        X : features of the studied dataset 
+        Y : target variable of the studied dataset
+    
+    Returns:
+    --------
+        PMFs : dictionary containing the PMFs of all features
+        bases : dictionary containing the bases of all features
+
+    References: 
+    -----------
+    [1] Generation and evaluation of ______
+
+    """ 
+    
+    # Empty dictionarues to store the PMFs and histogram bases
+    PMFs = {}
+    bases = {}
+    
+    # Counter initialization 
+    i = 0
+
+    # Feature loop to compute tge PMF and histogram bases of all features
+    for feature in X :
+
+        # Calculate histograms
+        bins = np.arange(np.floor(X[feature].min()),np.ceil(X[feature].max()+0.01),step=0.1) 
+        value, base = np.histogram(X[feature], bins = bins, density = 1) 
+        bases[feature] = base
+        hist = scipy.stats.rv_histogram([value, base]) 
+
+        # Calculate PMF
+        PMFs[feature]= hist.pdf(base)
+        i = i+1
+
+    return PMFs, bases
  	  
-def kl_divergence(p, q):
+def kl_divergence(p : pd.DataFrame, q : pd.DataFrame) -> float:
+    """ This function computes the Kullback Leibler Divergence (KLD)
+    of to matrices p and q. KLD formulation can be found in [1].
+    
+    Arguments:
+    ---------
+        p : vector representing one feature of a given dataset  
+        q : different vector representing the same feature as p
+    
+    Returns:
+    --------
+        kld : KLD between p and q
+
+    References: 
+    -----------
+    [1] Generation and evaluation of ______
+
+    """
+
+    # Substitute 0 with 1e-7 to avoid log zero errors
     p[p == 0] = 0.0000001
     q[q == 0] = 0.0000001
-    return np.sum(np.where(p != 0, p * np.log(p / q), 0))
 
-def KLD(X, ref_PMF, ref_hist_base): 
-  PMFs = {}
-  KLDs = {}
-  i = 0
-  for feature in X :
-    # calculate histograms
-    bins = np.arange(np.floor(X[feature].min()),np.ceil(X[feature].max()+0.01),step=0.1) 
-    value, base = np.histogram(X[feature], bins = bins, density = 1)  
-    hist = scipy.stats.rv_histogram([value, base]) 
-    # Calculate PMF
-    PMF = hist.pdf(ref_hist_base[feature])
-    PMFs[feature] = PMF
-    # Calculate KLD
-    KLDs[feature] = kl_divergence(ref_PMF[feature], PMF)
-    i = i+1 
-
-    KLD_total = sum(KLDs.values())
+    # KLD calculation 
+    kld = np.sum(np.where(p != 0, p * np.log(p / q), 0))
     
-  return KLD_total, KLDs, PMFs
+    return kld
+
+def KLD(X : pd.DataFrame, ref_PMF : Dict, ref_hist_base : Dict) -> Tuple [float, Dict, Dict]: 
+    
+    """ This function computes the Kullback Leibler Divergence (KLD)
+    (calling kl_divergence function) of all features as described in [1].
+    From the Probabilities Mass Functions (PMF) of the features, 
+    (here calculated using the histogram), KLD is calculated. 
+    Then, to obtain a single KLD value, the KLD values are added. 
+    Thus, an indiviual anaylyis can be done studied the individual KLDs
+    returned in this function, but the added KLD provides an overview of how similar,
+    in general, the synthetic dataset is to the original one.
+    
+    Arguments:
+    ---------
+        X : features of the studied dataset 
+        Y : target variable of the studied dataset
+    
+    Returns:
+    --------
+        pcd : the MMD between X and Y
+
+    References: 
+    -----------
+    [1] Generation and evaluation of ______
+
+    """
+  
+  
+    # Empty dictionaries to store the individual PMFs and KLDs
+    PMFs = {}
+    KLDs = {}
+
+    # Counter initialization
+    i = 0
+
+    # Feature loop to compute the KLD of different features and accumulate the results
+    for feature in X :
+
+        # Calculate histogram
+        bins = np.arange(np.floor(X[feature].min()),np.ceil(X[feature].max()+0.01),step=0.1) 
+        value, base = np.histogram(X[feature], bins = bins, density = 1)  
+        hist = scipy.stats.rv_histogram([value, base]) 
+
+        # Calculate Probability Mass Function from histograms 
+        PMF = hist.pdf(ref_hist_base[feature])
+        PMFs[feature] = PMF
+
+        # Calculate KLD from the reference PMF and the PMF of the current feature
+        KLDs[feature] = kl_divergence(ref_PMF[feature], PMF)
+
+        # Increment counter
+        i = i+1 
+
+        # Individual KLD accumulation to give a single result for the whole dataset 
+        KLD_total = sum(KLDs.values())
+    
+    return KLD_total, KLDs, PMFs
 	
-def mmd_linear(X, Y):
-    """MMD using linear kernel (i.e., k(x,y) = <x,y>)
+def mmd_linear(X : pd.DataFrame, Y : pd.DataFrame) -> float:
+    """ This is the fast implementation of the linear Maximum Mean Discrepancy (MMD) 
+    implemented by Jindong Wang, available in 
+    https://github.com/jindongwang/transferlearning/blob/master/code/distance/mmd_numpy_sklearn.py
+    
+    As stated in the abovementioned repository: 
+
+    MMD using linear kernel (i.e., k(x,y) = <x,y>)
     Note that this is not the original linear MMD, only the reformulated and faster version.
     The original version is:
         def mmd_linear(X, Y):
@@ -77,16 +212,26 @@ def mmd_linear(X, Y):
             YY = np.dot(Y, Y.T)
             XY = np.dot(X, Y.T)
             return XX.mean() + YY.mean() - 2 * XY.mean()
+    
     Arguments:
-        X {[n_sample1, dim]} -- [X matrix]
-        Y {[n_sample2, dim]} -- [Y matrix]
+    ---------
+        X : features of the studied dataset 
+        Y : target variable of the studied dataset
+    
     Returns:
-        [scalar] -- [MMD value]
+    --------
+        pcd : the MMD between X and Y
     """
+    
+    # Calculation of the different dot products
     XX = np.dot(X, X.T)
     YY = np.dot(Y, Y.T)
     XY = np.dot(X, Y.T)
-    return XX.mean() + YY.mean() - 2 * XY.mean()
+
+    # Computation of MMD
+    mmd = XX.mean() + YY.mean() - 2 * XY.mean()
+    
+    return mmd
 
 def balancing_eval(dataset : str, X: pd.DataFrame, y: pd.DataFrame, ref_data : pd.DataFrame,
                  columns: List, y_tag : str, algorithms: Tuple [str, str, str, str, str, str], 
@@ -102,7 +247,10 @@ def balancing_eval(dataset : str, X: pd.DataFrame, y: pd.DataFrame, ref_data : p
     and stored in a .csv. 
 
     Notice that for fairly balanced datasets, some algorithms may faile or not converge. When this happens,
-    set one of the strings in the algorithm Tuple to None, so this algorithm is not analysed. 
+    set one of the strings in the algorithm Tuple to None, so this algorithm is not analysed.
+
+    For more information about the algorithms, visit
+    https://imbalanced-learn.org/stable/ 
 
     Args:
     -----
@@ -114,8 +262,8 @@ def balancing_eval(dataset : str, X: pd.DataFrame, y: pd.DataFrame, ref_data : p
         y_tag: name of the target variable 
         algorithms: balancing algorithms to be evaluated. Algorithms better be placed in this order as a tuple:
         ["ADASYN", "SMOTE", "SMOTENC", "KMeansSMOTE", "SVMSMOTE", "BorderlineSMOTE"]. To ommit an algorithm evaluation,
-        substitute the given algorithm by "None". To further configuration of these algorithms, manage them into their
-        correspondant function. 
+        substitute the given algorithm by "None". To more in-depth configuration of these algorithms, go to their
+        correspondant call within this function. 
         filename: name of the .csv file to store the results 
         iterations: number of iterations in the algorithm evaluation 
         store_path: path to store obtained results 
@@ -224,7 +372,7 @@ def balancing_eval(dataset : str, X: pd.DataFrame, y: pd.DataFrame, ref_data : p
 
     # From numpy to DataFrame to suit the calculation of boxplots
     # Remove "None" element from algorithms list 
-    #algorithms.remove(None)
+    # algorithms.remove(None)
 
     # Empty list declaration 
     pcd = list()
@@ -318,13 +466,9 @@ def data_aug(model, augmenting_params : Tuple [str, str, pd.DataFrame, List],
         model: synthetic data generator model (so far only CTGAN or Gaussian Copula from https://sdv.dev/SDV/
         have been tested).
         augmenting_params: Tuple [augmentation_technique, balancing_tecnique, data, num_samples]. First two elements
-        are strings to properly store the dataset. Last elements are the dataframe containing the dataset
+        are strings to properly manage the dataset. Last elements are the dataframe containing the dataset
         itself and the list with the diffrent amount of synthetic samples to be generated. 
         Order must be as described to ensure proper functioning of this code. 
-        augmentation_technique : name of the used data augmentation technique 
-        balancing_technique : name of the used data balancing technique 
-        data: reference dataset to fit the synthetic generator 
-        conds: conditions to generate the dataset (e.g., set Glucose value over 100).
         size_index: when more than one size is tested, indicates the index of it.
         iter: synthetic data generation iteration index 
         SAVE_DATASETS: when set to True, all generated datasets are stored using pickle in ./synthetic_datasets. When False, 
@@ -387,9 +531,7 @@ def data_aug_cond(model, augmenting_params : Tuple [str, str, pd.DataFrame, List
         iter: synthetic data generation iteration index  
         SAVE_DATASETS: when set to True, all generated datasets are stored using pickle in ./synthetic_datasets. When False, 
         dataset is generated without being stored. 
-        
-
-        
+            
     Returns:
     --------
         aug_data: dataframe containing synthetic generated samples together with real samples
@@ -587,15 +729,17 @@ def data_aug_cond_after_split(model, augmenting_params : Tuple [str, str, pd.Dat
     return aug_data, samples
 
 def basic_stats(X : pd.DataFrame, technique : str, file: str) -> np.array:
+    
     """From a given dataset, mean, std., skewness and kurtosis are
-    computed and saved in a .csv file, pointing out wich technique 
-    has been used to generate the evaluated data. 
-    a .csv file and . 
+    computed and saved in a .csv file, indicating wich technique 
+    has been used to generate the evaluated data. This function has not 
+    been finally included in the framework but has not been removed from 
+    this file. 
 
     Args:
     -----
         X: dataframe containing the synthetic dataset
-        technique: name of the employed synthetic data generator
+        technique: name of the employed synthetic data generation technique
         file: .csv file name
 
     Returns:
@@ -608,7 +752,10 @@ def basic_stats(X : pd.DataFrame, technique : str, file: str) -> np.array:
     # Write first line in file 
     file.write("%s\nmean,\tstd.,\tskewness,\tkurtosis\t\n" % technique)
     
+    # Counter initialization 
     i = 0
+
+    # Loop over all features
     for feature in X :
         
         # Compute and store parameters 
@@ -622,6 +769,12 @@ def basic_stats(X : pd.DataFrame, technique : str, file: str) -> np.array:
     return stats
  	
 class Positive(Constraint):
+
+    """This class of type Constraint comes from the SDV library.
+    Objects of this class will only have positive values after 
+    synthetic data generation. More in https://sdv.dev/ 
+    """
+
     def __init__(self, column_name,handling_strategy='reject_sampling'):
         self._column_name = column_name
         super().__init__(handling_strategy=handling_strategy)
@@ -634,7 +787,12 @@ class Positive(Constraint):
         return positive
 
 class Binary(Constraint):
-    "Ensure model output is properly controlled"
+
+    """This class of type Constraint comes from the SDV library.
+    Objects of this class will only be binary after 
+    synthetic data generation. More in https://sdv.dev/ 
+    """
+
     def __init__(self, column_name,handling_strategy='reject_sampling'):
         self._column_name = column_name
         super().__init__(handling_strategy=handling_strategy)

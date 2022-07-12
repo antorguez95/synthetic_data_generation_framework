@@ -1,23 +1,33 @@
-import numpy as np 
-from sklearn import metrics
-from sklearn.metrics import plot_roc_curve
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import plot_confusion_matrix
-from sklearn.metrics import f1_score
-import matplotlib.pyplot as plt
+# Copyright (C) 2022 Antonio Rodriguez
+# 
+# This file is part of synthetic_data_generation_framework.
+# 
+# synthetic_data_generation_framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# synthetic_data_generation_framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with synthetic_data_generation_framework.  If not, see <http://www.gnu.org/licenses/>.
 
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import plot_confusion_matrix
-
-from sklearn import base
-
-from typing import List, Tuple, Dict
+import numpy as np
 
 import pandas as pd
 
- 
-def acc_auc_roc_SVM(model : base.BaseEstimator, X : pd.DataFrame, y : pd.DataFrame):
+from sklearn import metrics
+from sklearn.metrics import plot_roc_curve, f1_score
+from sklearn import base
 
+import matplotlib.pyplot as plt
+
+from typing import List, Tuple, Dict
+
+def acc_auc_roc_SVM(model : base.BaseEstimator, X : pd.DataFrame, y : pd.DataFrame):
       """Computes accuracy (acc), Area Under the Curve (AUC), Reciever Operating 
       Characteristics (ROC) and F1-score for a given SVM Classifier and a given 
       dataset. This function is thought to be used in a validation or test set".
@@ -25,10 +35,13 @@ def acc_auc_roc_SVM(model : base.BaseEstimator, X : pd.DataFrame, y : pd.DataFra
       Args:
       -----
             models: sklearn SVM instance.
+            X : features of the dataset
+            y : target variable of the dataset.
+
       Returns:
       --------
             acc: accuracy on the validation set.
-            auc: AUC on the validation set.
+            roc_auc: AUC on the validation set.
             f1_sc: F1-score on the validation set.
       """
       # Prediction 
@@ -48,7 +61,6 @@ def acc_auc_roc_SVM(model : base.BaseEstimator, X : pd.DataFrame, y : pd.DataFra
       return acc, roc_auc, f1_sc
 		
 def acc_auc_roc_general(model : base.BaseEstimator, X : pd.DataFrame, y : pd.DataFrame):
-
       """Computes accuracy (acc), Area Under the Curve (AUC), Reciever Operating 
       Characteristics (ROC) and F1-score for a sklearn Classifier and a given 
       dataset. This function is thought to be used in a validation or test set".
@@ -80,19 +92,7 @@ def acc_auc_roc_general(model : base.BaseEstimator, X : pd.DataFrame, y : pd.Dat
       f1_sc = f1_score(y, y_pred)
               
       return acc, auc, f1_sc 
-
-def conf_matrix(models):
-      for model, data in models:
-        y_pred = model[0].predict(model[1])
-        confusion_matrix(data[0], y_pred)
-        title = "Confusion Matrix - %s" % data[1]
-        disp = plot_confusion_matrix(model[0], model[1], data[0],
-                                  cmap=plt.cm.Blues)
-        disp.ax_.set_title(title)
-        plt.show()
-        conf_matrix = disp.confusion_matrix
-      return conf_matrix
-     
+    
 def get_eval_dictionaries(sdg_combinations: List, sizes_keys: List, class_metrics : List, iterations : int) -> Tuple [Dict, Dict, Dict]:
       """This function generates and returns three different dictionaries to evaluate
        the Synthetic Data Generation (SDG) in three ways:
@@ -108,9 +108,9 @@ def get_eval_dictionaries(sdg_combinations: List, sizes_keys: List, class_metric
 
       Args:
       -----
-            sdg_combinations: sklearn estimator instance.
-            sizes_keys: ML model name. 
-            class_metrics: Synthetic Data Generation employed to generate the synthetic 
+            sdg_combinations: list containing the employed SDG combinations.
+            sizes_keys: identificators of the different amount of synthetic samples generated. 
+            class_metrics: list containing the metrics used to evaluated the ML models 
             iterations: number of synthetic data generations iterations to be evaluated 
 
       Returns:

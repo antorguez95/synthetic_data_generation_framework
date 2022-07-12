@@ -1,12 +1,34 @@
+# Copyright (C) 2022 Antonio Rodriguez
+# 
+# This file is part of synthetic_data_generation_framework.
+# 
+# synthetic_data_generation_framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# synthetic_data_generation_framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with synthetic_data_generation_framework.  If not, see <http://www.gnu.org/licenses/>.
+
+
 import matplotlib.pyplot as plt
+
 import os 
+
 import pandas as pd
+
 import seaborn as sn
 
 def eda(data : pd. DataFrame, X : pd.DataFrame , Y : pd.DataFrame, dataset_name : str, folder : str = r"./EDA") :
-     """Performs Exploratory Data Analysis (EDA) when a dataset if given:
+     """Performs Exploratory Data Analysis (EDA) when a numerical dataset if given:
      General information, dataset dimensions, amount of missing data, control/cases ratio, 
      histograms, boxplots and Pearson's correlation matrix are computed and stored. 
+     Errors correction with categorical variables has not been implemented yet.
 
      Args:
      -----
