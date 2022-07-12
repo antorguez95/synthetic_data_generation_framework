@@ -2,10 +2,58 @@ import pickle
 import matplotlib.pyplot as plt 
 import numpy as np 
 import os 
-#from main import data_balance1 # to extract reference size
+
+############################################ ARGUMENTS #####################################
 
 # Path where directories are stored
-DICT_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\codigo\synthetic_data_generation_framework\Bangladesh\results"
+DICT_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\codigo\synthetic_data_generation_framework\HeartDiseases\results"
+
+dataset_name = 'Early-DM'
+
+# Variables needed to handle dictionaries (same as )
+# Number of generated data samples 
+sizes_keys = ["quarter", "half", "unit", "double", "quadruple", "only-synth"]
+
+# Balancing Methods 
+balance1 = "NC"
+balance2 = "SVM-SMOTE"
+
+# Augmentation methods
+augmen1 = "CTGAN"
+augmen2 = "GC"
+
+best_worst = ['NC + Sep. + GC', 'SVM-SMOTE + CTGAN'] 
+
+models = ['SVM','RF', 'XGB', 'KNN']
+
+model_colors = ['b','r','k','g']
+
+# Chosen colors for each combinations
+ctgan_colors = ["k","r","g","b"]
+gc_colors = ["c","m","y","orange"]
+
+# Studied metrics
+mets = ["PCD","MMD","KLD"]
+
+# Strings containing combinations of SDG (Synthetic Data Generators) 
+comb1 = ("%s + %s") % (balance1, augmen1)
+comb2 = ("%s + %s") % (balance1, augmen2)
+comb3 = ("%s + %s") % (balance2, augmen1)
+comb4 = ("%s + %s") % (balance2, augmen2)
+comb5 = ("%s + Sep. + %s") % (balance1, augmen1)
+comb6 = ("%s + Sep. + %s") % (balance1, augmen2)
+comb7 = ("%s + Sep. + %s") % (balance2, augmen1)
+comb8 = ("%s + Sep. + %s") % (balance2, augmen2)
+comb9 = "%s" % (augmen1)
+comb10 = "Sep. + %s" % (augmen1)
+
+# Split CTGAN and Gaussian Copula methods to plot them separately
+ctgan_combinations = [comb1, comb3, comb5, comb7]
+gc_combinations = [comb2, comb4, comb6, comb8]
+
+############################################ ARGUMENTS #####################################
+
+
 
 # Go to that directory
 os.chdir(DICT_PATH)
@@ -37,45 +85,92 @@ knn_f1_nosynth = pickle.load(s)
 s = open("sizes.txt", "rb")
 sizes = pickle.load(s)
 
-# Variables needed to handle dictionaries (same as )
-# Number of generated data samples 
-sizes_keys = ["quarter", "half", "unit", "double", "quadruple"]
+# Plot all F1-score vs. data samples (8 subplots)
+print("Generating and saving all classification results for this database...")
 
-# Balancing Methods 
-balance1 = "ADASYN"
-balance2 = "Borderline"
+fig, ax = plt.subplots(4,2)
 
-# Augmentation methods
-augmen1 = "CTGAN"
-augmen2 = "GC"
+# Set IEEE style 
+plt.style.use(['science','ieee'])
 
-# Strings containing combinations of SDG (Synthetic Data Generators) 
-comb1 = ("%s + %s") % (balance1, augmen1)
-comb2 = ("%s + %s") % (balance1, augmen2)
-comb3 = ("%s + %s") % (balance2, augmen1)
-comb4 = ("%s + %s") % (balance2, augmen2)
-comb5 = ("%s + Sep. + %s") % (balance1, augmen1)
-comb6 = ("%s + Sep. + %s") % (balance1, augmen2)
-comb7 = ("%s + Sep. + %s") % (balance2, augmen1)
-comb8 = ("%s + Sep. + %s") % (balance2, augmen2)
-comb9 = "%s" % (augmen1)
-comb10 = "Sep. + %s" % (augmen1)
+# Iterating the dictionary to plot the CTGAN-based combinations    
+for m in range(len(ctgan_combinations)) :  
+    
+    for i in range(len(models)):
+        
+        x_vector = np.zeros(len(sizes_keys)) # Vector to fill before plotting the errorbar
+        y_vector = np.zeros(len(sizes_keys))
+        err_vector = np.zeros(len(sizes_keys))
+        
+        for method in ctgan_combinations:
+            
+            for j in range(len(sizes_keys)):
 
-# Plot figures
+                x_vector[j] = sizes[j]
+                y_vector[j] = class_metrics[models[i]][ctgan_combinations[m]][sizes_keys[j]]['f1'].mean()
+                err_vector[j] = class_metrics[models[i]][ctgan_combinations[m]][sizes_keys[j]]['f1'].std()
+
+        ax[m,0].errorbar(x_vector, y_vector, err_vector, capsize = 4.0, linestyle=':', marker='o', color=model_colors[i])
+
+        # Plot the reference lines (Validation results without synthetic data)
+        ax[m,0].axhline(y=SVM_f1_nosynth, color='b', linestyle='--')  
+        ax[m,0].axhline(y=rf_f1_nosynth, color='r', linestyle='--') 
+        ax[m,0].axhline(y=xgb_f1_nosynth, color='k', linestyle='--') 
+        ax[m,0].axhline(y=knn_f1_nosynth, color='g', linestyle='--') 
+
+        # Write the name of the chosen methods
+        fig.text(0.15, 0.15 + m*0.2, ctgan_combinations[m])
+
+# Iterating the dictionary to plot the GC-based combinations    
+for m in range(len(gc_combinations)) :  
+    
+    for i in range(len(models)):
+        
+        x_vector = np.zeros(len(sizes_keys)) # Vector to fill before plotting the errorbar
+        y_vector = np.zeros(len(sizes_keys))
+        err_vector = np.zeros(len(sizes_keys))
+        
+        for method in gc_combinations:
+            
+            for j in range(len(sizes_keys)):
+
+                x_vector[j] = sizes[j]
+                y_vector[j] = class_metrics[models[i]][gc_combinations[m]][sizes_keys[j]]['f1'].mean()
+                err_vector[j] = class_metrics[models[i]][gc_combinations[m]][sizes_keys[j]]['f1'].std()
+
+        ax[m,1].errorbar(x_vector, y_vector, err_vector, capsize = 4.0, linestyle=':', marker='o', color=model_colors[i])
+
+        # Plot the reference lines (Validation results without synthetic data)
+        ax[m,1].axhline(y=SVM_f1_nosynth, color='b', linestyle='--')  
+        ax[m,1].axhline(y=rf_f1_nosynth, color='r', linestyle='--') 
+        ax[m,1].axhline(y=xgb_f1_nosynth, color='k', linestyle='--') 
+        ax[m,1].axhline(y=knn_f1_nosynth, color='g', linestyle='--') 
+
+        # Write the name of the chosen methods
+        fig.text(0.60, 0.15 + m*0.2, gc_combinations[m])
+
+# Set figure text 
+fig.text(0.5, 0.04, 'Nº of samples', ha='center')
+fig.text(0.01, 0.5, 'F1-score', va='center', rotation='vertical')
+
+# Remove x-labels
+ax[0,0].set_xticklabels([])
+ax[1,0].set_xticklabels([])
+ax[2,0].set_xticklabels([])
+ax[0,1].set_xticklabels([])
+ax[1,1].set_xticklabels([])
+ax[2,1].set_xticklabels([])
+
+# Set legend 
+ax[0,0].legend(models, bbox_to_anchor=(0.07,1.02,1,0.2), loc="lower left",
+                mode="None", borderaxespad=0, ncol=4, prop={'size': 6})
+
+name = dataset_name + "_f1_vs_data_samples_ALL_CASES"
+plt.savefig(name, dpi = 600)
+
 # FIGURE I - Scatter plots with trend line: Metrics vs. Data size
 print("Generating and saving Figure 1...")    
 
-# Split CTGAN and Gaussian Copula methods to plot them separately
-ctgan_combinations = [comb1, comb3, comb5, comb7]
-gc_combinations = [comb2, comb4, comb6, comb8]
-       
-# Studied metrics
-mets = ["PCD","MMD","KLD"]
-    
-# Chosen colors for each combinations
-ctgan_colors = ["k","r","g","b"]
-gc_colors = ["c","m","y","orange"]
-    
 # Figure 
 fig, axs = plt.subplots(3,2)
     
@@ -174,16 +269,11 @@ axs[0,1].legend(gc_combinations, bbox_to_anchor=(0,1.02,1,0.2), loc="lower left"
                 mode="None", borderaxespad=0, ncol=2, prop={'size': 4})
 
 
-plt.savefig('BANG_metrics_vs_synthetic_data_samples', dpi=600)
+name = dataset_name + "_metrics_vs_synthetic_data_samples"
+plt.savefig(name , dpi=600)
 
 # FIGURE II - F1-Score versus data samples (Best abd worst cases) 
 print("Generating and saving Figure 2...") 
-
-best_worst = ['Borderline + Sep. + GC', 'ADASYN + CTGAN'] 
-
-models = ['SVM','RF', 'XGB', 'KNN']
-
-model_colors = ['b','r','k','g']
 
 fig, ax = plt.subplots(2)
 
@@ -234,13 +324,14 @@ ax[1].axhline(y=rf_f1_nosynth, color='r', linestyle='--')
 ax[1].axhline(y=xgb_f1_nosynth, color='k', linestyle='--') 
 ax[1].axhline(y=knn_f1_nosynth, color='g', linestyle='--')              
 
-plt.savefig('BANG_f1_vs_data_samples', dpi = 600)
+name = dataset_name + "_f1_vs_data_samples"
+plt.savefig(name, dpi = 600)
 
 # FIGURE III: Metrics vs. F1-Score
 print("Generating and saving Figure 3...") 
 
 # Best combination: ADASYN + GC
-best_method = "ADASYN + GC"
+best_method = "NC + GC"
 
 fig, ax = plt.subplots(3)
 
@@ -294,4 +385,50 @@ ax[1].set_xticklabels([])
 ax[0].legend(models, bbox_to_anchor=(0.07,1.02,1,0.2), loc="lower left",
                 mode="None", borderaxespad=0, ncol=4, prop={'size': 6})
 # Save figure
-plt.savefig('BANG_sdg_metrics_vs_f1_score', dpi=600)
+name = dataset_name + "_sdg_metrics_vs_f1_score"
+plt.savefig(name, dpi=600)
+
+# Print the best upgrade and worst downgrade, the correspondant method and the percentage of used synthetic data 
+all_combs = [comb1, comb2, comb3, comb4, comb5, comb6, comb7, comb8]
+
+finals_f1 = list()
+
+for model in models: 
+    for comb in all_combs:
+        
+        a = list()
+
+        for size in sizes_keys:   
+            finals_f1.append([class_metrics[model][comb][size]['f1'].mean(), model, comb, size])
+
+# Split lists into sublist of the different ML classifiers used 
+svm_finals_f1 = list()
+for idx in range(len(finals_f1)): 
+    if 'SVM' in finals_f1[idx]: 
+        svm_finals_f1.append(finals_f1[idx]) 
+
+rf_finals_f1 = list()
+for idx in range(len(finals_f1)): 
+    if 'RF' in finals_f1[idx]: 
+        rf_finals_f1.append(finals_f1[idx]) 
+
+xgb_finals_f1 = list()
+for idx in range(len(finals_f1)): 
+    if 'XGB' in finals_f1[idx]: 
+        xgb_finals_f1.append(finals_f1[idx]) 
+
+knn_finals_f1 = list()
+for idx in range(len(finals_f1)): 
+    if 'KNN' in finals_f1[idx]: 
+        knn_finals_f1.append(finals_f1[idx]) 
+
+
+print("\nMaximum upgrade in F1-Score using SVM is: %f, using '%s' SDG technique and '%s' amount of synthetic data" % ((max(svm_finals_f1)[0] - SVM_f1_nosynth), max(svm_finals_f1)[2], max(svm_finals_f1)[3]))
+print("Maximum upgrade in F1-Score using RF is: %f, using '%s' SDG technique and '%s' amount of synthetic data" % ((max(rf_finals_f1)[0] - rf_f1_nosynth), max(rf_finals_f1)[2], max(rf_finals_f1)[3]))
+print("Maximum upgrade in F1-Score using XGB is: %f, using '%s' SDG technique and '%s' amount of synthetic data" % ((max(xgb_finals_f1)[0] - xgb_f1_nosynth), max(xgb_finals_f1)[2], max(xgb_finals_f1)[3]))
+print("Maximum upgrade in F1-Score using KNN is: %f, using '%s' SDG technique and '%s' amound of synthetic data\n" % ((max(knn_finals_f1)[0] - knn_f1_nosynth), max(knn_finals_f1)[2], max(knn_finals_f1)[3]))
+
+print("Worst downgrade in F1-Score using SVM is: %f, using '%s' SDG technique and '%s' amount of synthetic data" % ((min(svm_finals_f1)[0] - SVM_f1_nosynth), min(svm_finals_f1)[2], min(svm_finals_f1)[3]))
+print("Worst downgrade in F1-Score using RF is: %f, using '%s' SDG technique and '%s' amount of synthetic data" % ((min(rf_finals_f1)[0] - rf_f1_nosynth), min(rf_finals_f1)[2], min(rf_finals_f1)[3]))
+print("Worst downgrade in F1-Score using XGB is: %f, using '%s' SDG technique and '%s' amount of synthetic data" % ((min(xgb_finals_f1)[0] - xgb_f1_nosynth), min(xgb_finals_f1)[2], min(xgb_finals_f1)[3]))
+print("Worst downgrade in F1-Score using KNN is: %f, using '%s' SDG technique and '%s' amount of synthetic data" % ((min(knn_finals_f1)[0] - knn_f1_nosynth), min(knn_finals_f1)[2], min(knn_finals_f1)[3]))

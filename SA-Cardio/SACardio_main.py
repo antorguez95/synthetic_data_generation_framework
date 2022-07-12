@@ -12,7 +12,7 @@ from sklearn.svm import SVC
 import sys 
 sys.path.append('..')
 
-from imblearn.over_sampling import SMOTE, ADASYN, SMOTENC, KMeansSMOTE, SVMSMOTE, BorderlineSMOTE
+from imblearn.over_sampling import ADASYN, BorderlineSMOTE
 
 from SACardio_utils import *
 
@@ -186,7 +186,7 @@ eda(validation_data, X_val, y_val, dataset_name, folder = r"./EDA_val")
 # Balancing algorithms evaluation
 if BALANCING_CHECKED  == False : 
     print("Balancing algorithms evaluation... %i iterations running" % bal_iterations)
-    balancing_eval('KidneyChronic', X_train, y_train, train_data,
+    balancing_eval(dataset_name, X_train, y_train, train_data,
                  feat_names, y_tag, bal_methods, 
                   cat_feat_idxs, filename = "balancing_metrics.csv" , iterations = bal_iterations, store_path = STORE_PATH)
 

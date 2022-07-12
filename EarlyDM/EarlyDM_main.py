@@ -188,7 +188,8 @@ if BALANCING_CHECKED  == False :
                   cat_feat_idxs, filename = "balancing_metrics.csv" , iterations = bal_iterations, store_path = STORE_PATH)
 
 # In case balancing evaluation is not done, change directory
-os.chdir(STORE_PATH)
+else: 
+    os.chdir(STORE_PATH)
 
 #%% A) Data Balancing 
 # Strings of selected methods (after analaysing previous step results (i.e., balancing_eval())
