@@ -46,17 +46,13 @@ where [`environment.yml`](environment.yml) contained the name of the installed e
 To execute the whole experiment, with the default settings, this is the line of code you must type in a Python terminal. Changes will be introduced 
 to input the parameters from the terminal. 
     
-    ```
     cd dataset_folder
     python DATASET_NAME_main.py
-    ```
  
 Once the results have been already generated, one can visualize some figureas after loading the obtained results. Changes will be introduced 
 to input the parameters from the terminal.  From the main folder, execute this:
  
-    ```
     python gen_and_save_figs.py
-    ```
   
 ## Generated results
 
