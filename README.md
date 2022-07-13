@@ -43,11 +43,15 @@ where [`environment.yml`](environment.yml) contained the name of the installed e
 
 ## How do I run these scripts?
 
-
+    ```
+    cd dataset_folder
+    python DATASET_NAME_main.py
+    ```
+    
+    ```
+    python gen_and_save_figs.py
+    ```
   
- 
-
-
 ## Generated results
 
 Due to their particularities, each database has its own script. The execution of each of them will generate am `EDA` and `results` folders that contain the initial Exploratory Data Analysis (EDA) and the results after data augmentation, respectively. Results are stored as figures or as `.pkl` files containing the numerical values of the metrics analysed. Please, refer to ######PAPER###### for further information regarding the studied metrics and obtained results. 
