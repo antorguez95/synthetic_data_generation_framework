@@ -46,12 +46,12 @@ where [`environment.yml`](environment.yml) contained the name of the installed e
 
 ## How do I run these scripts?
 
-To execute the whole experiment, with the default settings, this is the line of code you must type in a Python terminal. Changes in the code will be introduced to input the parameters from the terminal,
+To execute the whole experiment, with the default settings, this is the line of code you must type in a Python terminal. Changes in the code will be introduced to input the parameters from the terminal
     
     cd DATASET_FOLDER
     python DATASET_NAME_main.py
  
-where `DATASET_FOLDER` must be replaced by the folder correspondant to the dataset (e.g., `PIMA`) and `DATASET_NAME` must be replaced by one of the 8 used databases (e.g., `PIMA`). 
+where `DATASET_FOLDER` must be replaced by the folder correspondant to the dataset (e.g., `PIMA`) and `DATASET_NAME` must be replaced by one of the 8 used databases (e.g., `PIMA`). Notice that this lines must be executed one time per database. 
 
 Once the results have been already generated, one can visualize some figures after loading the obtained results without the need of re-executing everything. If you do not have `Latex` installed in your PC, please do one of the following things: 
     
