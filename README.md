@@ -4,7 +4,7 @@
 
 This repository contains the code of our published work in the Journal of Biomedical and Health informatics: "Synthetic Patient Data Generation and 
 Evaluation in Disease Prediction Using Small and Imbalanced Datasets". The main objective of this work was to demonstrate the feasibility of the employment of synthetic data to train Machine Learning models validated with real medical tabular data for classification tasks. This, without harming the statistical properties of the original data.
-Obtained results demonstrates that, using CTGAN ####PAPER##### and  a Gaussian Copula of the SDV library, ###ENLACE A LIBRERIAS##### classification performances can be perfectly maintained, and in some cases even improved. Further research must be done in this line, yet the results present in our work are promising. 
+Obtained results demonstrates that, using CTGAN ####PAPER##### and  a Gaussian Copula of the , ###ENLACE A LIBRERIAS##### [SDV library](https://sdv.dev/SDV/) classification performances can be perfectly maintained, and in some cases even improved. Further research must be done in this line, yet the results present in our work are promising. 
 
 Please cite our paper #####PAPER if this framework somehow help you in your research and/or development work.
 
