@@ -51,7 +51,7 @@ to input the parameters from the terminal,
  
 where `DATASET_FOLDER` must be replaced by the folder correspondant to the dataset (e.g., `PIMA`) and `DATASET_NAME` must be replaced by one of the 8 used databases (e.g., `PIMA`). 
 
-Once the results have been already generated, one can visualize some figures after loading the obtained results. The choice of the dataset must be done inside the  `gen_and_save.py` for now, as indicated in the comments of such file. Changes will be introduced to input the parameters from the terminal.
+Once the results have been already generated, one can visualize some figures after loading the obtained results without the need of re-executing everything. The choice of the dataset to be analyzed must be done inside the  `gen_and_save.py` for now, as indicated in the comments of such file. Changes will be introduced to input the parameters from the terminal.
 From the main folder, execute this:
  
     python gen_and_save_figs.py
