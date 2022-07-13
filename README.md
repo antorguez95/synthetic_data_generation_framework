@@ -27,11 +27,13 @@ This framework is entirely developed in Python language.
 1. Install [conda](https://docs.conda.io/en/latest/) package manager.
 2. Clone this repository.
 3. Enter the 'synthetic_data_generation' directory 
-4. Create the environment as shown below,
+4. Create the environment by running:
 
-  conda env create -f environment.yml -n IGTD
+    conda env create -f environment.yml -n IGTD
+   
+   and activate the already installed envirionment by running: 
 
-  conda activate IGTD
+    conda activate IGTD
 
 where [`environment.yml`](environment.yml) contained the name of the installed environment, the installed libraries and the channel used to download such libraries.
 
