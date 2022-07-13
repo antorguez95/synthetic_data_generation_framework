@@ -31,7 +31,7 @@ This framework is entirely developed in Python language.
 
 _line of code_ 
 
-where [`environment.yml`](environment.yml) contained the installed libraries and the channel used to download such libraries.
+where [`environment.yml`](environment.yml) contained the name of the installed environment, the installed libraries and the channel used to download such libraries.
 
 ## How do I run these scripts?
 
