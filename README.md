@@ -7,6 +7,8 @@ Evaluation in Disease Prediction Using Small and Imbalanced Datasets"####PAPER. 
 
 Obtained results demonstrate that, using [CTGAN](https://arxiv.org/abs/1907.00503) and a Gaussian Copula available at the [SDV library](https://sdv.dev/SDV/), classification performances can be perfectly maintained, and even improved in some cases. Further research must be done in this line, yet the results present in our work are promising. 
 
+`results` folder contained the most relevant results, most of them published in our work####PAPER. Further executions will overwrite the original results if neither the folder nor the file names are properly change within the code. `EDA` folders has not been included yet, since some errors arise when dealing with categorical variables. With `PIMA` and `SA-Cardio` databases Exploratory Data Analysis functions work becuase these datasets do not contain categorical variables. 
+
 Please cite our paper #####PAPER if this framework somehow help you in your research and/or development work, or if you use this piece of code. 
 
 ## Datasets Availability 
