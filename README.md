@@ -30,13 +30,13 @@ This framework is entirely developed in Python language.
 4. Create the environment by running:
 
     ```
-    conda env create -f environment.yml -n IGTD
+    conda env create -f environment.yml -n SGD
     ```
    
  5. Activate the already installed envirionment by running: 
 
     ```
-    conda activate IGTD
+    conda activate SGD
     ```
 
 where [`environment.yml`](environment.yml) contained the name of the installed environment, the installed libraries and the channel used to download such libraries.
