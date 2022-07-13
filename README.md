@@ -20,7 +20,7 @@ This framework is entirely developed in Python language.
 4) [Early Diabetes Mellitus](https://www.kaggle.com/datasets/ishandutta/early-stage-diabetes-risk-prediction-dataset) 
 5) [Heart Disease](https://www.kaggle.com/datasets/cherngs/heart-disease-cleveland-uci)
 6) [Kidney Chronic Disease](https://archive.ics.uci.edu/ml/datasets/chronic_kidney_disease)
-7) [Diabetes PIMA Database]()
+7) [Diabetes PIMA Database](https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database)
 8) [South Africa Cardio](https://www.kaggle.com/datasets/yassinehamdaoui1/cardiovascular-disease)
 
 ## How do I run these scripts?
