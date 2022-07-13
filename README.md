@@ -29,11 +29,15 @@ This framework is entirely developed in Python language.
 3. Enter the 'synthetic_data_generation' directory 
 4. Create the environment by running:
 
+    ```
     conda env create -f environment.yml -n IGTD
+    ```
    
  5. Activate the already installed envirionment by running: 
 
+    ```
     conda activate IGTD
+    ```
 
 where [`environment.yml`](environment.yml) contained the name of the installed environment, the installed libraries and the channel used to download such libraries.
 
