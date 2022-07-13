@@ -7,7 +7,7 @@ Evaluation in Disease Prediction Using Small and Imbalanced Datasets"####PAPER. 
 
 There are 8 folders, one for each `database`. Inside each folder there are two files: `database_utils.py` and `database_main.py` (being `database` the correspondant name for each database. The former contains constants and custom functions developed uniquely for that database. The latter contains the most important part of this work; the script with the framework itself. One script has been developed for each database due to the heterogeneity and particularities of all databases. The arguments/parameters of every script are on the top of them. Notice that, with the default parameters (`bal_iterations = 100`, `aug_iterations = 10`), and the current grid of Machine Learning models (see `svm_params`, `rf_params`, `xgb_params`, `knn_params` variables) execution time can last from around 6 hours to nearly a day. Reduction of iterations and/or grid parameters will reduce the execution time.
 
-`results` folder contain the most relevant results, most of them published in our work####PAPER. Further executions of this code will overwrite the original results if neither the folder nor the file names are properly changed within the code. `EDA` folders has not been included yet, even they are generated when executing this code, since some errors arise when dealing with categorical variables. With `PIMA` and `SACardio` databases Exploratory Data Analysis functions work because these datasets do not contain categorical variables. 
+`results` folder contain the most relevant results, most of them published in our work####PAPER. Further executions of this code will overwrite the original results if neither the folder nor the file names are properly changed within the code. `EDA` folders has not been included yet, even they are generated when executing this code, since some errors arise when dealing with categorical variables. With `PIMA` and `SACardio` databases Exploratory Data Analysis (EDA) functions work because these datasets do not contain categorical variables. 
 
 Obtained results demonstrate that, using [CTGAN](https://arxiv.org/abs/1907.00503) and a Gaussian Copula available at the [SDV library](https://sdv.dev/SDV/), classification performances can be perfectly maintained, and even improved in some cases. Further research must be done in this line, yet the results present in our work are promising. 
 
@@ -64,7 +64,7 @@ The choice of the dataset to be analyzed must be done inside the `gen_and_save.p
   
 ## Generated results
 
-As previously outilined, due to their particularities, each database has its own script. The execution of each of them will generate am `EDA` and `results` folders that contain the initial Exploratory Data Analysis (EDA) and the results after data augmentation, respectively. Results are stored as figures, as `.pkl` files and/or as `.txt` files containing the numerical values of the metrics analysed. Please, refer to ######PAPER###### for further information regarding the studied metrics and obtained results. 
+As previously outilined, due to their particularities, each database has its own script. The execution of each of them will generate am `EDA` and `results` folders that contain the initial EDA and the results after data augmentation, respectively. Results are stored as figures, as `.pkl` files and/or as `.txt` files containing the numerical values of the metrics analysed. Please, refer to ######PAPER###### for further information regarding the studied metrics and obtained results. 
 
 ## Learn more 
 
