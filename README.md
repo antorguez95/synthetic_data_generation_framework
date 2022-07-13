@@ -16,7 +16,7 @@ This framework is entirely developed in Python language.
 
 1) [MNCD](https://pubmed.ncbi.nlm.nih.gov/33361594/)
 2) MNCD-Reduced (version with more patients and less features than MNCD)
-3) [Bangladesh]()
+3) [Bangladesh](https://www.kaggle.com/datasets/sabbir1996/dataset-of-diabetes-type1)
 4) [Early Diabetes Mellitus](https://www.kaggle.com/datasets/ishandutta/early-stage-diabetes-risk-prediction-dataset) 
 5) [Heart Disease](https://www.kaggle.com/datasets/cherngs/heart-disease-cleveland-uci)
 6) [Kidney Chronic Disease](https://archive.ics.uci.edu/ml/datasets/chronic_kidney_disease)
