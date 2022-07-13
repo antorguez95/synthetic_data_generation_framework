@@ -31,7 +31,7 @@ This framework is entirely developed in Python language.
 
     conda env create -f environment.yml -n IGTD
    
-   and activate the already installed envirionment by running: 
+ 5. Activate the already installed envirionment by running: 
 
     conda activate IGTD
 
