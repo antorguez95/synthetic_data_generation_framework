@@ -23,14 +23,22 @@ This framework is entirely developed in Python language.
 7) [Diabetes PIMA Database](https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database)
 8) [South Africa Cardio](https://www.kaggle.com/datasets/yassinehamdaoui1/cardiovascular-disease)
 
+## Set up before running this code
+1. Install [conda](https://docs.conda.io/en/latest/) package manager.
+2. Clone this repository.
+3. Enter the 'synthetic_data_generation' directory 
+4. Create the environment as shown below,
+
+_line of code_ 
+
+where [`environment.yml`](environment.yml) contained the installed libraries and the channel used to download such libraries.
+
 ## How do I run these scripts?
 
-In order to avoid code errors with libraries dependencies or misfunction, please install the needed libraries by running this line of code
-in your conda prompt. 
-
+Once the environment has been set up, ___ 
   FOR /F "delims=~" %f in (requirements.txt) DO conda install --yes "%f" || pip install "%f"
+  
  
- where [`requirements.txt`](requirements.txt) contained the installed libraries. 
 
 
 ## Generated results
