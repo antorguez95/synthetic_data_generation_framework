@@ -89,14 +89,14 @@ s = open("sizes.txt", "rb")
 sizes = pickle.load(s)
 
 ################################################################################
-# Now different figures are plotted in order to gain insight about synthetic data generation performance
+# Different figures are plotted in order to gain insight about synthetic data generation performance
 ################################################################################
 
 ################################################################################
-# Plot I - F1-score vs. data samples (8 subplots)
+# Figure I - F1-score vs. data samples (8 subplots)
 ################################################################################
 print("Loading variables for", dataset_name,"...")  
-print("Generating and saving Plot I...")  
+print("Generating and saving Figure I...")  
 
 fig, ax = plt.subplots(4,2)
 
@@ -136,6 +136,7 @@ for m in range(len(ctgan_combinations)) :
 # Iterating the dictionary to plot the GC-based combinations    
 for m in range(len(gc_combinations)) :  
     
+    # Iterating all models tested in the framework 
     for i in range(len(models)):
         
         # Vectors to be filled before plotting the errorbar
@@ -143,6 +144,7 @@ for m in range(len(gc_combinations)) :
         y_vector = np.zeros(len(sizes_keys))
         err_vector = np.zeros(len(sizes_keys))
         
+        # Compute mean and errorbar for each GC-based combination 
         for method in gc_combinations:
             
             for j in range(len(sizes_keys)):
@@ -186,10 +188,10 @@ name = dataset_name + "_f1_vs_data_samples_ALL_CASES"
 plt.savefig(name, dpi = 600)
 
 ################################################################################
-# Plot II - Scatter plots with trend line: Metrics vs. Data size
+# Figure II - Scatter plots with trend line: Metrics vs. Data size
 ################################################################################
 
-print("Generating and saving Plot II...")    
+print("Generating and saving Figure II...")    
 
 # Figure 
 fig, axs = plt.subplots(3,2)
@@ -205,6 +207,7 @@ for i in range(len(ctgan_combinations)):
    temp_mmd  = np.zeros(len(sizes_keys))
    temp_kld  = np.zeros(len(sizes_keys))
 
+   # Compute F1-score mean of all iterations for each size generated 
    for j in range(len(sizes_keys)):
 
       k = -1 # counter to -1 one to begin in 0
@@ -219,7 +222,7 @@ for i in range(len(ctgan_combinations)):
       temp_mmd[j] = sdg_metrics[ctgan_combinations[i]][sizes_keys[j]]['MMD'].mean()
       temp_kld[j] = sdg_metrics[ctgan_combinations[i]][sizes_keys[j]]['KLD'].mean()
     
-   # Calulate and draw the polynom
+   # Calulate and draw the polynoms
    z_pcd = np.polyfit(sizes, temp_pcd, 1)
    p_pcd = np.poly1d(z_pcd)
 
@@ -229,7 +232,7 @@ for i in range(len(ctgan_combinations)):
    z_kld = np.polyfit(sizes, temp_kld, 1)
    p_kld = np.poly1d(z_kld)
 
-   # Line format must be specified different with orange colour
+   # Set line format and draw it 
    line = ctgan_colors[i]+"--"
    axs[0,0].plot(sizes,p_pcd(sizes), line)
    axs[1,0].plot(sizes,p_mmd(sizes), line)
@@ -238,10 +241,12 @@ for i in range(len(ctgan_combinations)):
 # Gaussian Copula Plotting
 for i in range(len(gc_combinations)):
 
-   temp_pcd  = np.zeros(len(sizes_keys)) # variable to generate polyfit
+   # Variables to store polyfit
+   temp_pcd  = np.zeros(len(sizes_keys)) 
    temp_mmd  = np.zeros(len(sizes_keys))
    temp_kld  = np.zeros(len(sizes_keys))
 
+   # Iterate over all sizes
    for j in range(len(sizes_keys)):
 
       k = -1 # counter to -1 one to begin in 0
@@ -250,8 +255,10 @@ for i in range(len(gc_combinations)):
 
          k = k + 1 # counter increments to draw the next cell
 
+        # Scatter plot of metric vs. data size
          scatter2 = axs[k,1].scatter(sizes[j], sdg_metrics[gc_combinations[i]][sizes_keys[j]][metric].mean(), color = gc_colors[i])
     
+      # Calculation of the mean of all statistical metrics for each size
       temp_pcd[j] = sdg_metrics[gc_combinations[i]][sizes_keys[j]]['PCD'].mean()
       temp_mmd[j] = sdg_metrics[gc_combinations[i]][sizes_keys[j]]['MMD'].mean()
       temp_kld[j] = sdg_metrics[gc_combinations[i]][sizes_keys[j]]['KLD'].mean()
@@ -266,7 +273,7 @@ for i in range(len(gc_combinations)):
    z_kld = np.polyfit(sizes, temp_kld, 1)
    p_kld = np.poly1d(z_kld)
 
-   # Line format must be specified different with orange colour
+   # Plot the polynom 
    axs[0,1].plot(sizes,p_pcd(sizes), c = gc_colors[i], ls = "--")
    axs[1,1].plot(sizes,p_mmd(sizes), c = gc_colors[i], ls = "--")
    axs[2,1].plot(sizes,p_kld(sizes), c = gc_colors[i], ls = "--")
@@ -290,14 +297,15 @@ axs[0,1].legend(gc_combinations, bbox_to_anchor=(0,1.02,1,0.2), loc="lower left"
                 mode="None", borderaxespad=0, ncol=2, prop={'size': 4})
 
 
+# Set figure name and save figure 
 name = dataset_name + "_metrics_vs_synthetic_data_samples"
 plt.savefig(name , dpi=600)
 
 ################################################################################
-# FIGURE II - F1-Score versus data samples (Best abd worst cases) 
+# FIGURE III - F1-Score versus data samples (Best abd worst cases) 
 ################################################################################
 
-print("Generating and saving Figure 2...") 
+print("Generating and saving Figure III...") 
 
 fig, ax = plt.subplots(2)
 
@@ -307,12 +315,15 @@ plt.style.use(['science','ieee'])
 # Iterating the dictionary to plot the correspondant contents   
 for m in range(len(best_worst)) :  
     
+    # Iterate over all Machine Learning models 
     for i in range(len(models)):
         
-        x_vector = np.zeros(len(sizes_keys)) # Vector to fill before plotting the errorbar
+        # Vectors to be filed before plotting the errorbar
+        x_vector = np.zeros(len(sizes_keys)) 
         y_vector = np.zeros(len(sizes_keys))
         err_vector = np.zeros(len(sizes_keys))
         
+        # Take only best and worst cases
         for method in best_worst:
             
             for j in range(len(sizes_keys)):
@@ -348,41 +359,49 @@ ax[1].axhline(y=rf_f1_nosynth, color='r', linestyle='--')
 ax[1].axhline(y=xgb_f1_nosynth, color='k', linestyle='--') 
 ax[1].axhline(y=knn_f1_nosynth, color='g', linestyle='--')              
 
+# Set figure name and save figure
 name = dataset_name + "_f1_vs_data_samples"
 plt.savefig(name, dpi = 600)
 
 ################################################################################
-# FIGURE III: Metrics vs. F1-Score
+# FIGURE IV: Metrics vs. F1-Score
 ################################################################################
 
-print("Generating and saving Figure 3...") 
+print("Generating and saving Figure IV...") 
 
 fig, ax = plt.subplots(3)
 
+# Set IEEE style 
 plt.style.use(['science','ieee'])
 
 for i in range(len(models)): 
 
-    temp_f1  = np.zeros(len(sizes_keys)) # variable to generate polyfit
+    # Variables to store the polyfit 
+    temp_f1  = np.zeros(len(sizes_keys)) 
     temp_pcd  = np.zeros(len(sizes_keys)) 
     temp_mmd  = np.zeros(len(sizes_keys)) 
     temp_kld  = np.zeros(len(sizes_keys)) 
 
+    # Iterate over all sizes
     for j in range(len(sizes_keys)): 
         
+        # Get the F1-Score and the corresponding metrics
         for k in range(len(mets)):
             
             scatter1 = ax[k].scatter(class_metrics[models[i]][best_method][sizes_keys[j]]['f1'].mean(), 
                         sdg_metrics[best_method][sizes_keys[j]][mets[k]].mean(),
                         color = model_colors[i])            
     
+        # Get the mean of F1-Score and the corresponding metrics
         temp_f1[j] = class_metrics[models[i]][best_method][sizes_keys[j]]['f1'].mean()
         temp_pcd[j] = sdg_metrics[best_method][sizes_keys[j]]['PCD'].mean()
         temp_mmd[j] = sdg_metrics[best_method][sizes_keys[j]]['MMD'].mean()
         temp_kld[j] = sdg_metrics[best_method][sizes_keys[j]]['KLD'].mean()
     
+    # Set line format 
     line = model_colors[i]+"--"
 
+    # Generate and plot polyfits 
     z_pcd = np.polyfit(temp_f1, temp_pcd, 1)
     p_pcd = np.poly1d(z_pcd)
     ax[0].plot(temp_f1,p_pcd(temp_f1), line)
@@ -415,13 +434,25 @@ plt.savefig(name, dpi=600)
 # Print the best upgrade and worst downgrade, the correspondant method and the percentage of used synthetic data 
 all_combs = [comb1, comb2, comb3, comb4, comb5, comb6, comb7, comb8]
 
+
+################################################################################
+# Compute the best and worst case for each ML classification method
+################################################################################
+print("\nComputing the best and worst case for each ML classification method...")
+
+# Empty list to further store F1 values 
 finals_f1 = list()
 
+# Iterate over all ML models 
 for model in models: 
+    
+    # Iterate over all synthetic data generation combinations 
     for comb in all_combs:
         
+        # List to be appended to the list of F1 values
         a = list()
 
+        # Iterate over all synthetic data generations 
         for size in sizes_keys:   
             finals_f1.append([class_metrics[model][comb][size]['f1'].mean(), model, comb, size])
 
