@@ -174,3 +174,59 @@ pima_distributions = {
     'Age' : 'univariate', #'gamma',
     'Outcome' : 'univariate', #'gaussian',
     }
+
+################################################################################
+#              CONSTANTS TO HANDLE/STORE/VISUALIZE OBTAINED RESULTS            #
+################################################################################
+
+# Path where directories are stored
+DICT_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\codigo\synthetic_data_generation_framework\PIMA\results"
+
+dataset_name = 'PIMA'
+
+# Variables needed to handle dictionaries (same as )
+# Number of generated data samples 
+sizes_keys = ["quarter", "half", "unit", "double", "quadruple", "only-synth"]
+
+# Balancing Methods 
+balance1 = "ADASYN"
+balance2 = "Borderline"
+
+# Augmentation methods
+augmen1 = "CTGAN"
+augmen2 = "GC"
+
+best_worst = ['Borderline + Sep. + GC', 'ADASYN + CTGAN'] 
+
+best_method = 'Borderline + Sep. + GC'
+
+models = ['SVM','RF', 'XGB', 'KNN']
+
+model_colors = ['b','r','k','g']
+
+# Chosen colors for each combinations
+ctgan_colors = ["k","r","g","b"]
+gc_colors = ["c","m","y","orange"]
+
+# Studied metrics
+mets = ["PCD","MMD","KLD"]
+
+# Strings containing combinations of SDG (Synthetic Data Generators) 
+comb1 = ("%s + %s") % (balance1, augmen1)
+comb2 = ("%s + %s") % (balance1, augmen2)
+comb3 = ("%s + %s") % (balance2, augmen1)
+comb4 = ("%s + %s") % (balance2, augmen2)
+comb5 = ("%s + Sep. + %s") % (balance1, augmen1)
+comb6 = ("%s + Sep. + %s") % (balance1, augmen2)
+comb7 = ("%s + Sep. + %s") % (balance2, augmen1)
+comb8 = ("%s + Sep. + %s") % (balance2, augmen2)
+comb9 = "%s" % (augmen1)
+comb10 = "Sep. + %s" % (augmen1)
+
+# Split CTGAN and Gaussian Copula methods to plot them separately
+ctgan_combinations = [comb1, comb3, comb5, comb7]
+gc_combinations = [comb2, comb4, comb6, comb8]
+
+################################################################################
+#              CONSTANTS TO HANDLE/STORE/VISUALIZE OBTAINED RESULTS            #
+################################################################################

@@ -26,8 +26,8 @@ import openpyxl
 
 from sklearn.preprocessing import OneHotEncoder
 
-def prepare_HeartDiseases(dataset_path : str = "", filename : str = "") :
-    """Read the Kaggle-HeartDisease dataset from a .csv file and suit it to be processed 
+def prepare_ALZ_RED(dataset_path : str = "", filename1 : str = "", filename2 : str = "") :
+    """Read the Alzheimer-Balea-Reduced dataset from a .xlsx file and suit it to be processed 
     as a pd.DataFrame. It returns tha dataset dataframe and strings associated to 
     it to easy its management.
 
@@ -48,17 +48,49 @@ def prepare_HeartDiseases(dataset_path : str = "", filename : str = "") :
     # Go to dataset path
     os.chdir(dataset_path)
 
-    # Open the .csv file and convert it into DataFrame
-    data = pd.read_csv(filename)
+    # Open the Excel file 
+    bd1 = openpyxl.load_workbook(filename1)
+    bd2 = openpyxl.load_workbook(filename2)
 
-    # Store column names 
-    cols_names = data.columns
+    # Load the useful information of the Excel file 
+    sheet1 = bd1['Grupo 1']
+    sheet2 = bd2['Grupo 2']
+
+    # Convert sheet into DataFrame 
+    data1 = pd.DataFrame(sheet1.values)
+    data2 = pd.DataFrame(sheet2.values)
+
+    # Fix data properly in the dataframe 
+    tags1 = data1.iloc[0]
+    data1.columns = tags1
+    tags2 = data2.iloc[0]
+    data2.columns = tags2
+
+    # Drop first row, that contains the column names 
+    data1 = data1.drop(index = [0])
+    data2 = data2.drop(index = [0])
+
+    # Replace "NULL" values by a integer to be handled later 
+    data1 = data1.replace(to_replace = "#NULL!", value = 99999)
+    data2 = data2.replace(to_replace = "#NULL!", value = 99999)
+
+    # Joint dataframes 
+    frames = [data1, data2]
+    data = pd.concat(frames)
+
+    # Shuffle dataset to mix both subdatasets
+    data = data.sample(frac=1)
+
+    # Swap last column ('ERC') with prior column (target variable) to follow convention
+    target = data[['TNC']]
+    data = data.drop(columns=['TNC'])
+    data['TNC'] = target 
 
     # Store features' and target variable's names 
     cols_names_prev = data.columns
     y_tag = cols_names_prev[len(cols_names_prev)-1]
     cols_names = cols_names_prev[0:cols_names_prev.size]
-
+    
     # Save X, Y, feature names and Y name 
     y_tag = cols_names[len(cols_names)-1]
     cols_names = cols_names[0:len(cols_names)-1]
@@ -67,8 +99,49 @@ def prepare_HeartDiseases(dataset_path : str = "", filename : str = "") :
     
     return data, X, Y, cols_names, y_tag
 
-def general_conversion(data : pd.DataFrame) :
-    """Fix all Kaggle-HeartDisease database features data types to its original type.
+def numerical_conversion(data : np.array, features : str, y_col : str):
+    """Fix all Alzheimer-Balea reduces database features data types to its original type after KNNImputer is used,
+    since this functions returns only a floating points ndarray. For more, check sklearn 
+    documentation of this function at
+    https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html. After 
+    fixing datatypes, an ndarray to pd.DataFrame conversion is performed. Notice that this
+    operation is only done in the fields that were not originally floats.
+
+    Args:
+    -----
+            data: data returned by KNN Imputer (float data type).
+            features: list of strings containing the feature names of the dataset. 
+            y_col: target variable (i.e., Y) name 
+
+    Returns:
+    --------
+            data: dataframe containing the whole dataset after imputation
+            X : dataframe containing the dataset features after imputation
+            y : dataframe containing only the target variable after imputation
+    """
+    # From ndarray to pd.DataFrame
+    names = features.insert(len(features), y_col)
+    data = pd.DataFrame(data, columns = names)
+    
+    # Fixing necessary datatypes to int (including categorical variables)
+    data['Edad'] = data['Edad'].astype(int)
+    data['Sexo'] = data['Sexo'].astype(int)
+    data['Convivencia'] = data['Convivencia'].astype(int)
+    data['HTA'] = data['HTA'].astype(int)
+    data['DM'] = data['DM'].astype(int)
+    data['DLP'] = data['DLP'].astype(int)
+    data['Depresión'] = data['Depresión'].astype(int)
+    data['ERC'] = data['ERC'].astype(int)
+    data['TNC'] = data['TNC'].astype(int)
+
+    # Separate X and Y 
+    X = data[features]
+    y = data[[y_col]]    
+     
+    return data, X, y
+
+def general_conversion (data : pd.DataFrame) :
+    """Fix all Alzheimer-Balea Reduced database features data types to its original type.
     Categorical variables are set as "object" type. A DataFrame with the original 
     datatypes of this database is returned.
 
@@ -82,26 +155,21 @@ def general_conversion(data : pd.DataFrame) :
     --------
             data: dataframe with the original datatypes 
     """
-    data['age'] = data['age'].astype(int)
-    data['sex'] = data['sex'].astype(int) #bool
-    data['cp'] = data['cp'].astype('object')
-    data['trestbps'] = data['trestbps'].astype(int)
-    data['chol'] = data['chol'].astype(int)
-    data['fbs'] = data['fbs'].astype(int) #bool
-    data['restecg'] = data['restecg'].astype('object')
-    data['thalach'] = data['thalach'].astype(int)
-    data['exang'] = data['exang'].astype(int) #bool
-    data['oldpeak'] = data['oldpeak'].astype(float)
-    data['slope'] = data['slope'].astype(int)
-    data['ca'] = data['ca'].astype(int)
-    data['thal'] = data['thal'].astype('object')
-    data['target'] = data['target'].astype(int) #bool
+    data['Edad'] = data['Edad'].astype(int)
+    data['Sexo'] = data['Sexo'].astype(int)
+    data['Convivencia'] = data['Convivencia'].astype('object')
+    data['HTA'] = data['HTA'].astype(int)
+    data['DM'] = data['DM'].astype(int)
+    data['DLP'] = data['DLP'].astype(int)
+    data['Depresión'] = data['Depresión'].astype(int)
+    data['ERC'] = data['ERC'].astype(int)
+    data['TNC'] = data['TNC'].astype(int)
     
     return data
 
 def replacement(data : pd.DataFrame):
     """This function replaces the numerical values corresponding to categories in 
-    the Kaggle-Heart Diseases database by its correspondant category. It returns a DataFrame
+    the Alzheimer-Balea-Red database by its correspondant category. It returns a DataFrame
     after this replacement.
 
     Args:
@@ -112,16 +180,15 @@ def replacement(data : pd.DataFrame):
     --------
             data: dataframe with the categories represented by their correspondant string  
     """
-    data['cp']  = data['cp'].replace([0,1,2,3],['chest_pain_0', 'chest_pain_1', 'chest_pain_2', 'chest_pain_3'])
-    data['restecg']  = data['restecg'].replace([0,1,2],['restecg_0', 'restecg_1', 'restecg_2'])
-    data['thal']  = data['thal'].replace([0,1,2,3],['thal_0', 'thal_1', 'thal_2', 'thal_3'])
-
+    data['Convivencia']  = data['Convivencia'].replace([1,2,3],['conv_1', 'conv_2', 'conv_3'])
+    
     return data 
 
 def one_hot_enc(data):
-    """This function performs One-Hot Encoding in the Kaggle-Heart Diseases database. Columns full of 
-    0s must be manually added, because a certain value of a feature might not 
-    appear in the dataset subset. 
+    """This function performs One-Hot Encoding in the Alzheimer-Balea database. Since this
+    database is really small, validation and train sets are even smaller. Hence, sometimes 
+    columns full of 0s must be manually added, because a certain value of a feature does not 
+    appear in the dataset subset. This is the case of category 'Empresarios' of feature "ActLaboral". 
 
     Args:
     -----
@@ -134,104 +201,66 @@ def one_hot_enc(data):
     
     # One-hot Encoder declaration 
     enc = OneHotEncoder(handle_unknown='ignore')
-    # Chest pain 
-    cats = ['chest_pain_0', 'chest_pain_1', 'chest_pain_2', 'chest_pain_3']
-    data[['cp']] = data[['cp']].astype('category')
-    cp = pd.DataFrame(enc.fit_transform(data[['cp']]).toarray())
-    cp.columns = enc.categories_
+    # Convivencia 
+    cats = ['conv_1', 'conv_2', 'conv_3']
+    data[['Convivencia']] = data[['Convivencia']].astype('category')
+    convi = pd.DataFrame(enc.fit_transform(data[['Convivencia']]).toarray())
+    convi.columns = enc.categories_
     for name in cats:
-        if name not in cp:
-            cp[name] = 0
-    cp = cp[['chest_pain_0', 'chest_pain_1', 'chest_pain_2', 'chest_pain_3']]
-    cp.reset_index(drop=True, inplace=True)
-    # ECG resting 
-    cats = ['restecg_0', 'restecg_1', 'restecg_2']
-    data[['restecg']] = data[['restecg']].astype('category')
-    rest = pd.DataFrame(enc.fit_transform(data[['restecg']]).toarray())
-    rest.columns = enc.categories_
-    for name in cats:
-        if name not in rest:
-            rest[name] = 0 
-    rest = rest[['restecg_0', 'restecg_1', 'restecg_2']]        
-    rest.reset_index(drop=True, inplace=True)
-    # Thal
-    cats = ['thal_0', 'thal_1', 'thal_2', 'thal_3']
-    data[['thal']] = data[['thal']].astype('category')
-    thal = pd.DataFrame(enc.fit_transform(data[['thal']]).toarray())
-    thal.columns = enc.categories_
-    for name in cats:
-        if name not in thal:
-            thal[name] = 0    
-    thal = thal[['thal_0', 'thal_1', 'thal_2', 'thal_3']]
-    thal.reset_index(drop=True, inplace=True)
+        if name not in convi:
+            convi[name] = 0    
+    convi = convi[['conv_1', 'conv_2', 'conv_3']]
+    convi.reset_index(drop=True, inplace=True)
     
     # Drop column to add it at the end 
-    affected = data[['target']]
+    affected = data[['TNC']]
     affected.reset_index(drop=True, inplace=True)
     
     # Drop original categorical columns
-    data = data.drop(['cp', 'restecg', 'thal','target'], axis=1)
+    data = data.drop(['Convivencia', 'TNC'], axis=1)
     data.reset_index(drop=True, inplace=True)
     
-    data = pd.concat([data, cp, rest, thal, affected],axis=1)
+    data = pd.concat([data, convi, affected],axis=1)
     
     return data
 
 # Dictionary to specify fields of synthetic data for Alzheimer-Balea database
-heartDisease_fields = {
-    'age' : {
+alz_red_fields = {
+    'Sexo' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'sex' : {
+    'Edad' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'cp' : {
+    'Convivencia' : {
         'type' : 'categorical'
     },
-    'trestbps' : {
+    'HTA' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'chol' : {
+    'DM' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'fbs' : {
+    'DLP' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'restecg' : {
-        'type' : 'categorical'
-    },
-    'thalach' : {
+    'Depresión' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'exang' : {
+    'ERC' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'oldpeak' : {
-        'type' : 'numerical',
-        'subtype' : 'float'
-    },
-    'slope' : {
+    'TNC' : {
         'type' : 'numerical',
         'subtype' : 'integer'
     },
-    'ca' : {
-        'type' : 'numerical',
-        'subtype' : 'integer'
-    },
-    'thal' : {
-        'type' : 'categorical'
-    },
-    'target' : {
-        'type' : 'numerical',
-        'subtype' : 'integer'
-    },   
  }
 
 # Custom variable constraints to generate synthetic data 
@@ -262,47 +291,42 @@ constraints = [
                 ]
 
 # Distributions for each field (all set to univariate)
-heartDisease_distributions = {
-    'age' : 'univariate',#'gamma',
-    'sex' : 'univariate', #'gaussian',
-    'cp' : 'univariate', #'gaussian',
-    'trestbps' : 'univariate', #'gaussian',
-    'chol' : 'univariate', #'gamma',
-    'fbs' : 'univariate', #'gaussian',
-    'restecg' : 'univariate', #'gamma',
-    'thalach' : 'univariate', #'gamma',
-    'exang' : 'univariate', #'gaussian',
-    'oldpeak' : 'univariate', #'gaussian',
-    'slope' : 'univariate', #'gaussian',
-    'ca' : 'univariate', #'gaussian',
-    'thal' : 'univariate', #'gaussian',
-    'target' : 'univariate', #'gaussian',   
-    }
+alz_red_distributions = {
+    'Sexo' : 'univariate',
+    'Edad' : 'univariate', 
+    'Convivencia' : 'univariate', 
+    'HTA' : 'univariate', 
+    'DM' : 'univariate', 
+    'DLP' : 'univariate', 
+    'Depresión' : 'univariate', 
+    'ERC' : 'univariate', 
+    'TNC' : 'univariate', 
+    }  
 
 ################################################################################
 #              CONSTANTS TO HANDLE/STORE/VISUALIZE OBTAINED RESULTS            #
 ################################################################################
 
 # Path where directories are stored
-DICT_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\codigo\synthetic_data_generation_framework\HeartDiseases\results"
+DICT_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\codigo\synthetic_data_generation_framework\AlzheimerReduced\results"
 
-dataset_name = 'HeartDiseases'
+dataset_name = 'ALZ-RED'
 
 # Variables needed to handle dictionaries (same as )
 # Number of generated data samples 
 sizes_keys = ["quarter", "half", "unit", "double", "quadruple", "only-synth"]
 
 # Balancing Methods 
-balance1 = "SMOTE"
-balance2 = "NC"
+balance1 = "NC"
+balance2 = "Borderline"
 
 # Augmentation methods
 augmen1 = "CTGAN"
 augmen2 = "GC"
 
-best_worst = ['SMOTE + Sep. + GC', 'NC + CTGAN'] 
+best_worst = ['Borderline + Sep. + GC', 'NC + CTGAN'] 
 
-best_method = 'SMOTE + Sep. + GC'
+best_method = 'Borderline + Sep. + GC'
 
 models = ['SVM','RF', 'XGB', 'KNN']
 
@@ -333,4 +357,4 @@ gc_combinations = [comb2, comb4, comb6, comb8]
 
 ################################################################################
 #              CONSTANTS TO HANDLE/STORE/VISUALIZE OBTAINED RESULTS            #
-################################################################################  
+################################################################################
