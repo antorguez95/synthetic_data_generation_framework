@@ -12,16 +12,16 @@ This framework is entirely developed in Python language.
 
 ## Datasets Availability 
 
-9 different databases has been used to test this framework. Most of them are publicly available. The rest, available under request to the authors. Aiming replicability of this expermients to further improvements, links to the databases (when possible) are provided below: 
-1) MNCD
+8 different databases has been used to test this framework. Most of them are publicly available. The rest, available under request to the authors. Aiming replicability of this expermients to further improvements, links to the databases (or to the reference, when data is not freely available), are provided below: 
+
+1) [MNCD](https://pubmed.ncbi.nlm.nih.gov/33361594/)
 2) MNCD-Reduced (version with more patients and less features than MNCD)
-3) Bangladesh 
-4) Early Diabetes Mellitus 
-5) Framingham Cardiovasvcular Diseases Risk Prediction
-6) Heart Disease
-7) Kidney Chronic Disease
-8) Diabetes PIMA Database
-9) South Africa Cardio
+3) [Bangladesh]()
+4) [Early Diabetes Mellitus](https://www.kaggle.com/datasets/ishandutta/early-stage-diabetes-risk-prediction-dataset) 
+5) [Heart Disease](https://www.kaggle.com/datasets/cherngs/heart-disease-cleveland-uci)
+6) [Kidney Chronic Disease](https://archive.ics.uci.edu/ml/datasets/chronic_kidney_disease)
+7) [Diabetes PIMA Database]()
+8) [South Africa Cardio](https://www.kaggle.com/datasets/yassinehamdaoui1/cardiovascular-disease)
 
 ## How do I run these scripts?
 
