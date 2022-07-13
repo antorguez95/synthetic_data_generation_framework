@@ -55,9 +55,8 @@ where `DATASET_FOLDER` must be replaced by the folder correspondant to the datas
 
 Once the results have been already generated, one can visualize some figures after loading the obtained results without the need of re-executing everything. If you do not have `Latex` installed in your PC, please do one of the following things: 
     
-   a) Install it.
-   
-   b) Comment every line that contains  `plt.style.use(['science','ieee'])`  within the code. 
+- a) Install it. 
+- b) Comment every line that contains  `plt.style.use(['science','ieee'])`  within the code. 
 
 The choice of the dataset to be analyzed must be done inside the `gen_and_save.py` file for now, as indicated in the comments of such file. Changes will be introduced to input the parameters from the terminal. Afterwards, execute this line from the main folder:
  
