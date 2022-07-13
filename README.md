@@ -44,11 +44,13 @@ where [`environment.yml`](environment.yml) contained the name of the installed e
 ## How do I run these scripts?
 
 To execute the whole experiment, with the default settings, this is the line of code you must type in a Python terminal. Changes will be introduced 
-to input the parameters from the terminal. 
+to input the parameters from the terminal,
     
-    cd dataset_folder
+    cd DATASET_FOLDER
     python DATASET_NAME_main.py
  
+where ´DATASET_FOLDER´ must be replaced by the folder correspondant to the dataset (e.g., `PIMA`) and ´DATASET_NAME´ must be replaced by one of the 8 used databases (e.g., `PIMA`). 
+
 Once the results have been already generated, one can visualize some figureas after loading the obtained results. Changes will be introduced 
 to input the parameters from the terminal.  From the main folder, execute this:
  
