@@ -3,21 +3,11 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - matplotlib=3.2.1
-  - numpy=1.18.1
-  - pandas=0.25.3
-  - scipy=1.3.1
-  - keras=2.2.4
-  - scikit-learn=0.21.2
-  - tensorflow=1.14.0
-  - tensorflow-gpu=1.14.0
-
-
-  - scikit-learn=
-  - pandas=
-  - numpy=
+  - scikit-learn=1.0.2
+  - pandas=1.1.3
+  - numpy=1.21.5
   - imbalanced-learn= 
-  - matplotlib=
-  - sdv= 
-  - openpyxl=
-  - seaborn=
+  - matplotlib=0.7.0
+  - sdv=0.14.1
+  - openpyxl=3.0.9
+  - seaborn=0.11.2

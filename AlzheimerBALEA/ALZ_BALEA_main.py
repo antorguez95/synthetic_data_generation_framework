@@ -610,11 +610,7 @@ with open("hyperparameters.pkl", "wb") as hp_dict:
 hp_dict.close()
 
 # FIGURE I - Scatter plots with trend line: Metrics vs. Data size
-    
-# Split CTGAN and Gaussian Copula methods to plot them separately
-ctgan_combinations = [comb1, comb3, comb5, comb7]
-gc_combinations = [comb2, comb4, comb6, comb8]
-       
+
 sizes = sizes_balance1
    
 # Figure 
