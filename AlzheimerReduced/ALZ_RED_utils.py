@@ -26,15 +26,19 @@ import openpyxl
 
 from sklearn.preprocessing import OneHotEncoder
 
-def prepare_ALZ_RED(dataset_path : str = "", filename1 : str = "", filename2 : str = "") :
+from typing import Tuple, List 
+
+def prepare_ALZ_RED(dataset_path : str = "", filename1 : str = "", filename2 : str = "") -> Tuple(
+    pd.DataFrame, pd.DataFrame, pd.DataFrame, List, str) :
     """Read the Alzheimer-Balea-Reduced dataset from a .xlsx file and suit it to be processed 
     as a pd.DataFrame. It returns tha dataset dataframe and strings associated to 
     it to easy its management.
 
     Args:
     -----
-            dataset_path: path where ALZ-BALEA dataset is stored. Set by default.
-            filename : file name of the .csv containing the dataset. Set by default.
+            dataset_path: path where dataset is stored. Set by default.
+            filename1 : file name I of the .xlsx containing the dataset. Set by default.
+            filename2 : file name I of the .xlsx containing the dataset. Set by default.
 
     Returns:
     --------
@@ -99,10 +103,11 @@ def prepare_ALZ_RED(dataset_path : str = "", filename1 : str = "", filename2 : s
     
     return data, X, Y, cols_names, y_tag
 
-def numerical_conversion(data : np.array, features : str, y_col : str):
-    """Fix all Alzheimer-Balea reduces database features data types to its original type after KNNImputer is used,
-    since this functions returns only a floating points ndarray. For more, check sklearn 
-    documentation of this function at
+def numerical_conversion(data : np.array, features : str, y_col : str) -> Tuple(pd.DataFrame, 
+    pd.DataFrame, pd.DataFrame) :
+    """Fix all Alzheimer-Balea Reduced database features data types to its original type
+    after KNNImputer is used, since this functions returns only a floating points ndarray.
+    For more, check sklearn documentation of this function at
     https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html. After 
     fixing datatypes, an ndarray to pd.DataFrame conversion is performed. Notice that this
     operation is only done in the fields that were not originally floats.
@@ -140,7 +145,7 @@ def numerical_conversion(data : np.array, features : str, y_col : str):
      
     return data, X, y
 
-def general_conversion (data : pd.DataFrame) :
+def general_conversion (data : pd.DataFrame) -> pd.DataFrame :
     """Fix all Alzheimer-Balea Reduced database features data types to its original type.
     Categorical variables are set as "object" type. A DataFrame with the original 
     datatypes of this database is returned.
@@ -148,8 +153,6 @@ def general_conversion (data : pd.DataFrame) :
     Args:
     -----
             data: dataset with datatypes not corresponding to the original ones.
-            features: list of strings containing the feature names of the dataset. 
-            y_col: target variable (i.e., Y) name 
 
     Returns:
     --------
@@ -167,10 +170,10 @@ def general_conversion (data : pd.DataFrame) :
     
     return data
 
-def replacement(data : pd.DataFrame):
+def replacement(data : pd.DataFrame) -> pd.DataFrame :
     """This function replaces the numerical values corresponding to categories in 
-    the Alzheimer-Balea-Red database by its correspondant category. It returns a DataFrame
-    after this replacement.
+    the Alzheimer-Balea Reduced database by its correspondant category. It returns
+    a DataFrame after this replacement.
 
     Args:
     -----
@@ -184,11 +187,11 @@ def replacement(data : pd.DataFrame):
     
     return data 
 
-def one_hot_enc(data):
-    """This function performs One-Hot Encoding in the Alzheimer-Balea database. Since this
-    database is really small, validation and train sets are even smaller. Hence, sometimes 
-    columns full of 0s must be manually added, because a certain value of a feature does not 
-    appear in the dataset subset. This is the case of category 'Empresarios' of feature "ActLaboral". 
+def one_hot_enc(data : pd.DataFrame) -> pd.DataFrame :
+    """This function performs One-Hot Encoding in the Alzheimer-Balea Reduced database.
+    Since this database is really small, validation and train sets are even smaller. 
+    Hence, sometimes columns full of 0s must be manually added, because a certain value
+    of a feature does not appear in the dataset subset. 
 
     Args:
     -----
@@ -224,7 +227,7 @@ def one_hot_enc(data):
     
     return data
 
-# Dictionary to specify fields of synthetic data for Alzheimer-Balea database
+# Dictionary to specify fields of synthetic data for Alzheimer-Balea Reduced database
 alz_red_fields = {
     'Sexo' : {
         'type' : 'numerical',
@@ -324,12 +327,14 @@ balance2 = "Borderline"
 augmen1 = "CTGAN"
 augmen2 = "GC"
 
-best_worst = ['Borderline + Sep. + GC', 'NC + CTGAN'] 
+# Best and worst combination of synthetic data generation
+best_worst = ['Borderline + Sep. + GC', 'NC + CTGAN']  #might be wrong 
 
-best_method = 'Borderline + Sep. + GC'
+# Best combination of synthetic data generation
+best_method = 'Borderline + Sep. + GC' # might be wrong 
 
+# ML models used and their correspondant colours 
 models = ['SVM','RF', 'XGB', 'KNN']
-
 model_colors = ['b','r','k','g']
 
 # Chosen colors for each combinations

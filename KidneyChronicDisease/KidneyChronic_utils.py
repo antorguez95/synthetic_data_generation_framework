@@ -22,11 +22,11 @@ import numpy as np
 
 from  sdg_utils import Positive, Binary 
 
-from typing import Tuple
+from typing import Tuple, List
 
 from sklearn.preprocessing import OneHotEncoder
 
-def cat2num(data: pd.DataFrame):
+def cat2num(data: pd.DataFrame) -> pd.DataFrame:
     """This function replaces the categories in the Chronic Kidney Disease database by a number
     in order to be processed by the balancing algorithms, since this tool works better with 
     numbers. For more information, check https://imbalanced-learn.org/stable/. 
@@ -50,7 +50,7 @@ def cat2num(data: pd.DataFrame):
 
     return data
 
-def prepare_KidneyChronic(dataset_path : str = "", filename : str = "") -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, str, str]:
+def prepare_KidneyChronic(dataset_path : str = "", filename : str = "") -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, List, str]:
     """Read the Kidney Chronic disease dataset from a .csv file and suit it to be processed 
     from .arff format to as a pd.DataFrame. 
     
@@ -117,7 +117,7 @@ def prepare_KidneyChronic(dataset_path : str = "", filename : str = "") -> Tuple
     
     return data, X, Y, cols_names, y_tag
 
-def numerical_conversion(data : np.array, features : str, y_col : str):
+def numerical_conversion(data : np.array, features : str, y_col : str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Fix all Kidney Chronic Disease database features data types to its original 
     type after KNNImputer is used, since this functions returns only a floating points 
     ndarray. For more, check sklearn documentation of this function at
@@ -183,8 +183,6 @@ def general_conversion (data : pd.DataFrame) -> pd.DataFrame :
     Args:
     -----
             data: dataset with datatypes not corresponding to the original ones.
-            features: list of strings containing the feature names of the dataset. 
-            y_col: target variable (i.e., Y) name 
 
     Returns:
     --------
@@ -218,7 +216,7 @@ def general_conversion (data : pd.DataFrame) -> pd.DataFrame :
     
     return data
 
-def num2cat(data : pd.DataFrame):
+def num2cat(data : pd.DataFrame) -> pd.DataFrame:
     """This function replaces the numerical values corresponding to categories in 
     the KidneyChronic database by its correspondant category. It returns a DataFrame
     after this replacement.
@@ -242,7 +240,7 @@ def num2cat(data : pd.DataFrame):
  
     return data 
 
-def one_hot_enc(data):
+def one_hot_enc(data : pd.DataFrame) -> pd.DataFrame:
     """This function performs One-Hot Encoding in the KidneyChronic database. Sometimes 
     columns full of 0s must be manually added, because a certain value of a certain feature
     might not appear in the dataset subset.
@@ -331,7 +329,7 @@ def one_hot_enc(data):
     
     return data
 
-# Dictionary to specify fields of synthetic data for Alzheimer-Balea database
+# Dictionary to specify fields of synthetic data for Kidney Chronic Disease database
 kidneyChronic_fields = {
     'age' : {
         'type' : 'numerical',
@@ -485,6 +483,7 @@ kidneyChronic_distributions = {
 # Path where directories are stored
 DICT_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\codigo\synthetic_data_generation_framework\KidneyChronicDisease\results"
 
+# Dataset name 
 dataset_name = 'KidneyChronic'
 
 # Variables needed to handle dictionaries (same as )
@@ -499,12 +498,14 @@ balance2 = "Borderline"
 augmen1 = "CTGAN"
 augmen2 = "GC"
 
-best_worst = ['Borderline + Sep. + GC', 'ADASYN + CTGAN'] 
+# Best and worst synthetic data algorithms combinations
+best_worst = ['Borderline + Sep. + GC', 'ADASYN + CTGAN'] # might be wrong
 
-best_method = 'Borderline + Sep. + GC'
+# Best synthetic data algorithm combination
+best_method = 'Borderline + Sep. + GC' # might be wrong
 
+# ML models used and their assiociated colours 
 models = ['SVM','RF', 'XGB', 'KNN']
-
 model_colors = ['b','r','k','g']
 
 # Chosen colors for each combinations

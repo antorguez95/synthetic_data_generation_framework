@@ -22,18 +22,19 @@ import numpy as np
 
 from  sdg_utils import Positive, Binary 
 
-import openpyxl
-
 from sklearn.preprocessing import OneHotEncoder
 
-def prepare_HeartDiseases(dataset_path : str = "", filename : str = "") :
+from typing import List, Tuple
+
+def prepare_HeartDiseases(dataset_path : str = "", filename : str = "") -> Tuple[pd.DataFrame, 
+                    pd.DataFrame, pd.DataFrame, List, str] :
     """Read the Kaggle-HeartDisease dataset from a .csv file and suit it to be processed 
     as a pd.DataFrame. It returns tha dataset dataframe and strings associated to 
     it to easy its management.
 
     Args:
     -----
-            dataset_path: path where ALZ-BALEA dataset is stored. Set by default.
+            dataset_path: path where  dataset is stored. Set by default.
             filename : file name of the .csv containing the dataset. Set by default.
 
     Returns:
@@ -67,7 +68,7 @@ def prepare_HeartDiseases(dataset_path : str = "", filename : str = "") :
     
     return data, X, Y, cols_names, y_tag
 
-def general_conversion(data : pd.DataFrame) :
+def general_conversion(data : pd.DataFrame) -> pd.DataFrame :
     """Fix all Kaggle-HeartDisease database features data types to its original type.
     Categorical variables are set as "object" type. A DataFrame with the original 
     datatypes of this database is returned.
@@ -75,8 +76,6 @@ def general_conversion(data : pd.DataFrame) :
     Args:
     -----
             data: dataset with datatypes not corresponding to the original ones.
-            features: list of strings containing the feature names of the dataset. 
-            y_col: target variable (i.e., Y) name 
 
     Returns:
     --------
@@ -99,7 +98,7 @@ def general_conversion(data : pd.DataFrame) :
     
     return data
 
-def replacement(data : pd.DataFrame):
+def replacement(data : pd.DataFrame) -> pd.DataFrame :
     """This function replaces the numerical values corresponding to categories in 
     the Kaggle-Heart Diseases database by its correspondant category. It returns a DataFrame
     after this replacement.
@@ -118,9 +117,9 @@ def replacement(data : pd.DataFrame):
 
     return data 
 
-def one_hot_enc(data):
-    """This function performs One-Hot Encoding in the Kaggle-Heart Diseases database. Columns full of 
-    0s must be manually added, because a certain value of a feature might not 
+def one_hot_enc(data : pd.DataFrame) -> pd.DataFrame :
+    """This function performs One-Hot Encoding in the Kaggle-Heart Diseases database.
+    Columns full of 0s must be manually added, because a certain value of a feature might not 
     appear in the dataset subset. 
 
     Args:
@@ -177,7 +176,7 @@ def one_hot_enc(data):
     
     return data
 
-# Dictionary to specify fields of synthetic data for Alzheimer-Balea database
+# Dictionary to specify fields of synthetic data for Kaggle-HeartDisease database
 heartDisease_fields = {
     'age' : {
         'type' : 'numerical',
@@ -263,20 +262,20 @@ constraints = [
 
 # Distributions for each field (all set to univariate)
 heartDisease_distributions = {
-    'age' : 'univariate',#'gamma',
-    'sex' : 'univariate', #'gaussian',
-    'cp' : 'univariate', #'gaussian',
-    'trestbps' : 'univariate', #'gaussian',
-    'chol' : 'univariate', #'gamma',
-    'fbs' : 'univariate', #'gaussian',
-    'restecg' : 'univariate', #'gamma',
-    'thalach' : 'univariate', #'gamma',
-    'exang' : 'univariate', #'gaussian',
-    'oldpeak' : 'univariate', #'gaussian',
-    'slope' : 'univariate', #'gaussian',
-    'ca' : 'univariate', #'gaussian',
-    'thal' : 'univariate', #'gaussian',
-    'target' : 'univariate', #'gaussian',   
+    'age' : 'univariate',
+    'sex' : 'univariate', 
+    'cp' : 'univariate', 
+    'trestbps' : 'univariate', 
+    'chol' : 'univariate', 
+    'fbs' : 'univariate', 
+    'restecg' : 'univariate', 
+    'thalach' : 'univariate', 
+    'exang' : 'univariate', 
+    'oldpeak' : 'univariate', 
+    'slope' : 'univariate', 
+    'ca' : 'univariate',
+    'thal' : 'univariate', 
+    'target' : 'univariate',    
     }
 
 ################################################################################
@@ -286,6 +285,7 @@ heartDisease_distributions = {
 # Path where directories are stored
 DICT_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\codigo\synthetic_data_generation_framework\HeartDiseases\results"
 
+# Dataset name 
 dataset_name = 'HeartDiseases'
 
 # Variables needed to handle dictionaries (same as )
@@ -300,10 +300,13 @@ balance2 = "NC"
 augmen1 = "CTGAN"
 augmen2 = "GC"
 
-best_worst = ['SMOTE + Sep. + GC', 'NC + CTGAN'] 
+# Best and worst synthetic data combinations algorithms
+best_worst = ['SMOTE + Sep. + GC', 'NC + CTGAN'] # might be wrong
 
-best_method = 'SMOTE + Sep. + GC'
+# Best synthetic data combination algorithm 
+best_method = 'SMOTE + Sep. + GC' # might be wrong
 
+# ML models used 
 models = ['SVM','RF', 'XGB', 'KNN']
 
 model_colors = ['b','r','k','g']

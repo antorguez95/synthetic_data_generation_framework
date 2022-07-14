@@ -27,10 +27,10 @@ from typing import Tuple
 from sklearn.preprocessing import OneHotEncoder
 
 def prepare_SACardio(dataset_path : str = "", filename : str = "") -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, str, str]:
-    """Read the South Africa disease dataset from a .txt file and suit it to be processed 
-    from .arff format to as a pd.DataFrame. Some transformations are applied to handle 
-    this dataset properly (i.e., from "Present" to "1" and "Absent" to "0", etc. 
-    This converted DataFrame is returned. 
+    """Read the South Africa Cardio disease dataset from a .txt file and suit
+    it to be processed from .arff format to as a pd.DataFrame. Some transformations
+    are applied to handle this dataset properly (i.e., from "Present" to "1" and
+    "Absent" to "0", etc. This converted DataFrame is returned. 
 
     Args:
     -----
@@ -74,7 +74,7 @@ def prepare_SACardio(dataset_path : str = "", filename : str = "") -> Tuple[pd.D
     
     return data, X, Y, cols_names, y_tag
 
-# Dictionary to specify fields of synthetic data for Alzheimer-Balea database
+# Dictionary to specify fields of synthetic data for SACardio database
 SACardio_fields = {
     'sbp' : {
         'type' : 'numerical',
@@ -159,6 +159,7 @@ SACardio_distributions = {
 # Path where directories are stored
 DICT_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\codigo\synthetic_data_generation_framework\SACardio\results"
 
+# Dataset name 
 dataset_name = 'SACardio'
 
 # Variables needed to handle dictionaries (same as )
@@ -173,12 +174,14 @@ balance2 = "Borderline"
 augmen1 = "CTGAN"
 augmen2 = "GC"
 
+# Best and worst synthetic algorithms combinations 
 best_worst = ['ADASYN + Sep. + GC', 'Borderline + CTGAN'] 
 
+# Best synthetic algorithms combination
 best_method = 'ADASYN + Sep. + GC'
 
+# ML models used and their associated colours
 models = ['SVM','RF', 'XGB', 'KNN']
-
 model_colors = ['b','r','k','g']
 
 # Chosen colors for each combinations

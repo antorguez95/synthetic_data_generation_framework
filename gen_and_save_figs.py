@@ -487,3 +487,4 @@ print("Worst downgrade in F1-Score using SVM is: %f, using '%s' SDG technique an
 print("Worst downgrade in F1-Score using RF is: %f, using '%s' SDG technique and '%s' amount of synthetic data" % ((min(rf_finals_f1)[0] - rf_f1_nosynth), min(rf_finals_f1)[2], min(rf_finals_f1)[3]))
 print("Worst downgrade in F1-Score using XGB is: %f, using '%s' SDG technique and '%s' amount of synthetic data" % ((min(xgb_finals_f1)[0] - xgb_f1_nosynth), min(xgb_finals_f1)[2], min(xgb_finals_f1)[3]))
 print("Worst downgrade in F1-Score using KNN is: %f, using '%s' SDG technique and '%s' amount of synthetic data" % ((min(knn_finals_f1)[0] - knn_f1_nosynth), min(knn_finals_f1)[2], min(knn_finals_f1)[3]))
+

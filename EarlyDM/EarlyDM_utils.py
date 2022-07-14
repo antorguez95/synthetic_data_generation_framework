@@ -22,11 +22,11 @@ import numpy as np
 
 from  sdg_utils import Positive, Binary 
 
-from typing import Tuple
+from typing import Tuple, List
 
 from sklearn.preprocessing import OneHotEncoder
 
-def cat2num(data: pd.DataFrame):
+def cat2num(data: pd.DataFrame) -> pd.DataFrame:
     """This function replaces the categories in the Early-DM database by a number
     in order to be processed by the balancing algorithms, since this tool works better with 
     numbers. For more information, check https://imbalanced-learn.org/stable/. 
@@ -44,7 +44,7 @@ def cat2num(data: pd.DataFrame):
     
     return data
 
-def prepare_EarlyDM(dataset_path : str = "", filename : str = "") -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, str, str]:
+def prepare_EarlyDM(dataset_path : str = "", filename : str = "") -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, List, str]:
     """Read the Early-DM dataset from a .csv file and suit it to be processed 
     as a pd.DataFrame. This dataset presents lots of categorical and binary data. 
     Sometimes, binary data is indicated with a "yes" or a"no". Hence, some transformations
@@ -96,8 +96,9 @@ def prepare_EarlyDM(dataset_path : str = "", filename : str = "") -> Tuple[pd.Da
     return data, X, Y, cols_names, y_tag
 
 def general_conversion (data : pd.DataFrame) -> pd.DataFrame :
-    """Fix all Blangladesh database features data types to its original type.
-    Categorical variables are set as "object" type. Binary ones as "bool".
+    """Fix all Early-DM database features data types to its original type.
+    Categorical variables are set as "object" type. Binary ones as int, 
+    (boolean features arise errors in the data augmentation step).
     A DataFrame with the original datatypes of this database is returned.
 
     Args:
@@ -130,7 +131,7 @@ def general_conversion (data : pd.DataFrame) -> pd.DataFrame :
     
     return data
 
-def num2cat(data : pd.DataFrame):
+def num2cat(data : pd.DataFrame) -> pd.DataFrame:
     """This function replaces the numerical values corresponding to categories in 
     the EarlyDM database by its correspondant category. It returns a DataFrame
     after this replacement.
@@ -147,7 +148,7 @@ def num2cat(data : pd.DataFrame):
  
     return data 
 
-def one_hot_enc(data):
+def one_hot_enc(data) -> pd.DataFrame:
     """This function performs One-Hot Encoding in the EarlyDM database. 
 
     Args:
@@ -184,62 +185,8 @@ def one_hot_enc(data):
     
     return data
 
-# Dictionary to specify fields of synthetic data for Alzheimer-Balea database
-# earlyDM_fields = {
-#     'Age' : {
-#         'type' : 'numerical',
-#         'subtype' : 'integer'
-#     },
-#     'Gender' : {
-#         'type' : 'categorical'
-#     },  
-#     'Polyuria' : {
-#         'type' : 'boolean'
-#     }, 
-#     'Polydipsia' : {
-#         'type' : 'boolean'
-#     } ,
-#     'Polyphagia' : {
-#         'type' : 'boolean'
-#     } ,
-#     'sudden weight loss' : {
-#         'type' : 'boolean'
-#     } ,
-#     'weakness' : {
-#         'type' : 'boolean'
-#     } ,
-#     'Genital thrush' : {
-#         'type' : 'boolean'
-#     } ,
-#     'visual blurring' : {
-#         'type' : 'boolean'
-#     } ,
-#     'Itching' : {
-#         'type' : 'boolean'
-#     } ,
-#     'Irritability' : {
-#         'type' : 'boolean'
-#     } ,
-#     'delayed healing' : {
-#         'type' : 'boolean'
-#     } ,
-#     'partial paresis' : {
-#         'type' : 'boolean'
-#     } ,
-#     'muscle stiffness' : {
-#         'type' : 'boolean'
-#     } ,
-#     'Alopecia' : {
-#         'type' : 'boolean'
-#     } ,
-#     'Obesity' : {
-#         'type' : 'boolean'
-#     } ,
-#     'class' : {
-#         'type' : 'boolean'
-#     }           
-#  }
-
+# Dictionary to specify fields of synthetic data for Early-DM database
+# Boolean variables arise errors in the SDV library. They are modelled as integers
 earlyDM_fields = {
     'Age' : {
         'type' : 'numerical',

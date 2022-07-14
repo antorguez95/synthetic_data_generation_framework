@@ -20,12 +20,12 @@ import os
 import pandas as pd
 import numpy as np
 
-from typing import Callable, Tuple, Dict, List 
+from typing import Callable, Tuple, List 
 
 from  sdg_utils import Positive, Binary
 
-def prepare_PIMA(dataset_path : str = "", filename : str = "") :
-    """Read the PIMA dataset from a .csv file and suit it tu be processed 
+def prepare_PIMA(dataset_path : str = "", filename : str = "") -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, List, str] :
+    """Read the PIMA dataset from a .csv file and suit it to be processed 
     as a pd.DataFrame. It returns tha dataset dataframe and strings associated to 
     it to easy its management.
 
@@ -70,7 +70,7 @@ def prepare_PIMA(dataset_path : str = "", filename : str = "") :
     
     return data, X, Y, cols_names, y_tag
 
-def numerical_conversion(data : np.array, features : str, y_col : str):
+def numerical_conversion(data : np.array, features : str, y_col : str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame] :
     """Fix all PIMA database features data types to its original type after KNNImputer is used,
     since this functions returns only a floating points ndarray. For more, check sklearn 
     documentation of this function at
@@ -164,15 +164,15 @@ constraints = [
 
 # Distributions for each field (all set to univariate)
 pima_distributions = {
-    'Pregnancies' : 'univariate', #'gamma',
-    'Glucose' : 'univariate', #'gaussian',
-    'BloodPressure' : 'univariate', #'gaussian',
-    'SkinThickness' : 'univariate', #'gaussian',
-    'Insulin' : 'univariate', #'gamma',
-    'BMI' : 'univariate', #'gaussian',
-    'DiabetesPedigreeFunction' : 'univariate', #'gamma',
-    'Age' : 'univariate', #'gamma',
-    'Outcome' : 'univariate', #'gaussian',
+    'Pregnancies' : 'univariate',
+    'Glucose' : 'univariate', 
+    'BloodPressure' : 'univariate', 
+    'SkinThickness' : 'univariate',
+    'Insulin' : 'univariate', 
+    'BMI' : 'univariate', 
+    'DiabetesPedigreeFunction' : 'univariate', 
+    'Age' : 'univariate', 
+    'Outcome' : 'univariate',
     }
 
 ################################################################################
@@ -182,6 +182,7 @@ pima_distributions = {
 # Path where directories are stored
 DICT_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\codigo\synthetic_data_generation_framework\PIMA\results"
 
+# Dataset name
 dataset_name = 'PIMA'
 
 # Variables needed to handle dictionaries (same as )
@@ -196,12 +197,14 @@ balance2 = "Borderline"
 augmen1 = "CTGAN"
 augmen2 = "GC"
 
-best_worst = ['Borderline + Sep. + GC', 'ADASYN + CTGAN'] 
+# Best and worst synthetic generation algorithms combinations
+best_worst = ['Borderline + Sep. + GC', 'ADASYN + CTGAN'] # might be wrong
 
-best_method = 'Borderline + Sep. + GC'
+# Best synthetic generation algorithms combination
+best_method = 'Borderline + Sep. + GC' # might be wrong
 
+# ML models used and their associated colours
 models = ['SVM','RF', 'XGB', 'KNN']
-
 model_colors = ['b','r','k','g']
 
 # Chosen colors for each combinations

@@ -1,3 +1,20 @@
+# Copyright (C) 2022 Antonio Rodriguez
+# 
+# This file is part of synthetic_data_generation_framework.
+# 
+# synthetic_data_generation_framework is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# synthetic_data_generation_framework is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with synthetic_data_generation_framework.  If not, see <http://www.gnu.org/licenses/>.
+
 # Dependencies 
 import numpy as np 
 import pandas as pd
@@ -235,23 +252,6 @@ data_balance1= pd.concat([X_balance1, y_balance1], axis = 1)
 X_balance2.reset_index(drop=True, inplace=True)
 y_balance2.reset_index(drop=True, inplace=True)
 data_balance2 = pd.concat([X_balance2, y_balance2], axis = 1)
-
-# Copyright (C) 2022 Antonio Rodriguez
-# 
-# This file is part of synthetic_data_generation_framework.
-# 
-# synthetic_data_generation_framework is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# 
-# synthetic_data_generation_framework is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with synthetic_data_generation_framework.  If not, see <http://www.gnu.org/licenses/>.
 
 # From datasets, replace HTA and DM 2 and 1, by 1 and 0
 train_data['HTAanterior'] = train_data['HTAanterior'].replace([1,2],[1,0])

@@ -24,7 +24,9 @@ from  sdg_utils import Positive, Binary
 
 from sklearn.preprocessing import OneHotEncoder
 
-def cat2num(data: pd.DataFrame):
+from typing import Tuple, List 
+
+def cat2num(data: pd.DataFrame) -> pd.DataFrame:
     """This function replaces the categories in the Bangladesh database a number
     in order to be processed by the KNNImputer, since this tool works better with 
     numbers. For more, check sklearn documentation of this function at
@@ -50,18 +52,19 @@ def cat2num(data: pd.DataFrame):
     
     return data
 
-def prepare_BANG(dataset_path : str = "", filename : str = "") :
+def prepare_BANG(dataset_path : str = "", filename : str = "") -> Tuple[pd.DataFrame, 
+                pd.DataFrame, pd.DataFrame, List, str]:
     """Read the Bangladesh dataset from a .csv file and suit it to be processed 
     as a pd.DataFrame. This dataset presents lots of categorical and binary data. 
     Sometimes, they are written down differently within different features, or
     binary data is indicated with "yes" or "no". Hence, some transformations must be 
-    applied to handle this dataset propertly. From "yes" to "1", "No" to "0", etc. 
+    applied to handle this dataset properly. From "yes" to "1", "No" to "0", etc. 
     Finally, this function converts the categories into numbers to suit the dataset
     for the following steps. This converted DataFrame is returned.
 
     Args:
     -----
-            dataset_path: path where ALZ-BALEA dataset is stored. Set by default.
+            dataset_path: path where Bangladesh dataset is stored. Set by default.
             filename : file name of the .csv containing the dataset. Set by default.
 
     Returns:
@@ -128,7 +131,8 @@ def prepare_BANG(dataset_path : str = "", filename : str = "") :
     
     return data, X, Y, cols_names, y_tag
 
-def numerical_conversion(data : np.array, features : str, y_col : str):
+def numerical_conversion(data : np.array, features : str, y_col : str) -> Tuple(pd.DataFrame, 
+                        pd.DataFrame, pd.DataFrame) :
     """Fix all Bangladesh database features data types to its original type after KNNImputer is used,
     since this functions returns only a floating points ndarray. For more, check sklearn 
     documentation of this function at
@@ -182,7 +186,7 @@ def numerical_conversion(data : np.array, features : str, y_col : str):
      
     return data, X, y
 
-def general_conversion (data : pd.DataFrame) :
+def general_conversion (data : pd.DataFrame) -> pd.DataFrame :
     """Fix all Blangladesh database features data types to its original type.
     Categorical variables are set as "object" type. Binary ones as "bool".
     A DataFrame with the original datatypes of this database is returned.
@@ -190,8 +194,6 @@ def general_conversion (data : pd.DataFrame) :
     Args:
     -----
             data: dataset with datatypes not corresponding to the original ones.
-            features: list of strings containing the feature names of the dataset. 
-            y_col: target variable (i.e., Y) name 
 
     Returns:
     --------
@@ -222,7 +224,7 @@ def general_conversion (data : pd.DataFrame) :
     
     return data
 
-def num2cat(data : pd.DataFrame):
+def num2cat(data : pd.DataFrame) -> pd.DataFrame :
     """This function replaces the numerical values corresponding to categories in 
     the Bangladesh database by its correspondant category. It returns a DataFrame
     after this replacement.
@@ -246,7 +248,7 @@ def num2cat(data : pd.DataFrame):
     
     return data 
 
-def one_hot_enc(data):
+def one_hot_enc(data) -> pd.DataFrame :
     """This function performs One-Hot Encoding in the Bangladesh database. 
 
     Args:
@@ -284,9 +286,10 @@ def one_hot_enc(data):
     data = data.drop(['Age', 'Sex', 'HbA1c','Area of Residence ', 'Other diease','Standardized growth-rate in infancy', 'Standardized birth weight', 'Affected' ], axis=1)
     # Joint one-hot encoding columns 
     data = data.join([age, sex, residence, hb, growth, weight, affected])
+    
     return data
 
-# Dictionary to specify fields of synthetic data for Alzheimer-Balea database
+# Dictionary to specify fields of synthetic data for Bangladesh database
 bang_fields = {
     'Age' : {
         'type' : 'categorical'
@@ -432,6 +435,7 @@ bang_distributions = {
 # Path where directories are stored
 DICT_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\codigo\synthetic_data_generation_framework\Bangladesh\results"
 
+# Dataset name 
 dataset_name = 'BANG'
 
 # Variables needed to handle dictionaries (same as )
@@ -446,12 +450,14 @@ balance2 = "Borderline"
 augmen1 = "CTGAN"
 augmen2 = "GC"
 
-best_worst = ['Borderline + Sep. + GC', 'ADASYN + CTGAN'] 
+# Best and worst synthetic generation algorithms combinations 
+best_worst = ['Borderline + Sep. + GC', 'ADASYN + CTGAN'] #might be wrong 
 
-best_method = 'Borderline + Sep. + GC'
+# Best synthetic generation algorithms combinations
+best_method = 'Borderline + Sep. + GC' #might be wrong 
 
+# ML models used and associated colours 
 models = ['SVM','RF', 'XGB', 'KNN']
-
 model_colors = ['b','r','k','g']
 
 # Chosen colors for each combinations

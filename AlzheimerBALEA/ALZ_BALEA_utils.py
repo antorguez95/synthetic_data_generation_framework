@@ -26,7 +26,10 @@ import openpyxl
 
 from sklearn.preprocessing import OneHotEncoder
 
-def prepare_ALZ_BALEA(dataset_path : str = "", filename : str = "") :
+from typing import Tuple, List
+
+def prepare_ALZ_BALEA(dataset_path : str = "", filename : str = "") ->  Tuple(pd.DataFrame, 
+                                                        pd.DataFrame, pd.DataFrame, List, str) :
     """Read the Alzheimer-Balea dataset from a .xlsx file and suit it to be processed 
     as a pd.DataFrame. It returns tha dataset dataframe and strings associated to 
     it to easy its management.
@@ -88,10 +91,11 @@ def prepare_ALZ_BALEA(dataset_path : str = "", filename : str = "") :
     
     return data, X, Y, cols_names, y_tag
 
-def numerical_conversion(data : np.array, features : str, y_col : str):
-    """Fix all Alzheimer-Balea database features data types to its original type after KNNImputer is used,
-    since this functions returns only a floating points ndarray. For more, check sklearn 
-    documentation of this function at
+def numerical_conversion(data : np.array, features : str, y_col : str) -> Tuple(pd.DataFrame, 
+                                            pd.DataFrame, pd.DataFrame):
+    """Fix all Alzheimer-Balea database features data types to its original type after
+    KNNImputer is used, since this functions returns only a floating points ndarray. 
+    For more, check sklearn documentation of this function at
     https://scikit-learn.org/stable/modules/generated/sklearn.impute.KNNImputer.html. After 
     fixing datatypes, an ndarray to pd.DataFrame conversion is performed. Notice that this
     operation is only done in the fields that were not originally floats.
@@ -159,7 +163,7 @@ def numerical_conversion(data : np.array, features : str, y_col : str):
      
     return data, X, y
 
-def general_conversion (data : pd.DataFrame) :
+def general_conversion (data : pd.DataFrame) -> pd.DataFrame :
     """Fix all Alzheimer-Balea database features data types to its original type.
     Categorical variables are set as "object" type. A DataFrame with the original 
     datatypes of this database is returned.
@@ -217,7 +221,7 @@ def general_conversion (data : pd.DataFrame) :
     
     return data
 
-def replacement(data : pd.DataFrame):
+def replacement(data : pd.DataFrame) -> pd.DataFrame :
     """This function replaces the numerical values corresponding to categories in 
     the Alzheimer-Balea database by its correspondant category. It returns a DataFrame
     after this replacement.
@@ -261,7 +265,7 @@ def replacement(data : pd.DataFrame):
     
     return data 
 
-def one_hot_enc(data):
+def one_hot_enc(data : pd.DataFrame) -> pd.DataFrame :
     """This function performs One-Hot Encoding in the Alzheimer-Balea database. Since this
     database is really small, validation and train sets are even smaller. Hence, sometimes 
     columns full of 0s must be manually added, because a certain value of a feature does not 
@@ -616,43 +620,43 @@ constraints = [
 
 # Distributions for each field (all set to univariate)
 alz_distributions = {
-    'Grupo' : 'univariate',#'gamma',
-    'Edad' : 'univariate', #'gaussian',
-    'EstCivil' : 'univariate', #'gaussian',
-    'Actlaboral' : 'univariate', #'gaussian',
-    'FormatConvivencia' : 'univariate', #'gamma',
-    'NivelEducativo' : 'univariate', #'gaussian',
-    'ActIntelectual' : 'univariate', #'gamma',
-    'RelSociales' : 'univariate', #'gamma',
-    'AntCardiologi' : 'univariate', #'gaussian',
-    'AntNeurolog' : 'univariate', #'gaussian',
-    'AntRenal' : 'univariate', #'gaussian',
-    'AntPulmonar' : 'univariate', #'gaussian',
-    'AntDemencia' : 'univariate', #'gaussian',
-    'Tabaco' : 'univariate', #'gaussian',
-    'Alcohol' : 'univariate', #'gaussian',
-    'HTAanterior' : 'univariate', #'gaussian',
-    'TAS' : 'univariate', #'gaussian',
-    'TAD' : 'univariate', #'gaussian',
-    'DM' : 'univariate', #'gaussian',
-    'Barthel' : 'univariate', #'gaussian',
-    'Hb' : 'univariate', #'gaussian',
-    'VCM' : 'univariate', #'gaussian',
-    'HCM' : 'univariate', #'gaussian',
-    'Plaquetas' : 'univariate', #'gaussian',
-    'Leucocitos' : 'univariate', #'gaussian',
-    'Neutrófilos' : 'univariate', #'gaussian',
-    'Linfocitos' : 'univariate', #'gaussian',
-    'Monocitos' : 'univariate', #'gaussian',
-    'Glucosa' : 'univariate', #'gaussian',
-    'Creatinina' : 'univariate', #'gaussian',
-    'FG' : 'univariate', #'gaussian',
-    'Na' : 'univariate', #'gaussian',
-    'K' : 'univariate', #'gaussian',
-    'ALT' : 'univariate', #'gaussian',
-    'Colesterol' : 'univariate', #'gaussian',
-    'LDL' : 'univariate', #'gaussian',
-    'TNeurocog' : 'univariate', #'gaussian',   
+    'Grupo' : 'univariate',
+    'Edad' : 'univariate', 
+    'EstCivil' : 'univariate',
+    'Actlaboral' : 'univariate', 
+    'FormatConvivencia' : 'univariate', 
+    'NivelEducativo' : 'univariate', 
+    'ActIntelectual' : 'univariate', 
+    'RelSociales' : 'univariate', 
+    'AntCardiologi' : 'univariate', 
+    'AntNeurolog' : 'univariate',
+    'AntRenal' : 'univariate', 
+    'AntPulmonar' : 'univariate',
+    'AntDemencia' : 'univariate',
+    'Tabaco' : 'univariate',
+    'Alcohol' : 'univariate',
+    'HTAanterior' : 'univariate',
+    'TAS' : 'univariate',
+    'TAD' : 'univariate',
+    'DM' : 'univariate',
+    'Barthel' : 'univariate',
+    'Hb' : 'univariate',
+    'VCM' : 'univariate',
+    'HCM' : 'univariate',
+    'Plaquetas' : 'univariate',
+    'Leucocitos' : 'univariate',
+    'Neutrófilos' : 'univariate',
+    'Linfocitos' : 'univariate',
+    'Monocitos' : 'univariate',
+    'Glucosa' : 'univariate',
+    'Creatinina' : 'univariate',
+    'FG' : 'univariate',
+    'Na' : 'univariate',
+    'K' : 'univariate',
+    'ALT' : 'univariate',
+    'Colesterol' : 'univariate',
+    'LDL' : 'univariate',
+    'TNeurocog' : 'univariate',   
     }  
 
 ################################################################################
@@ -662,6 +666,7 @@ alz_distributions = {
 # Path where directories are stored
 DICT_PATH = r"C:\Users\aralmeida\OneDrive - Universidad de Las Palmas de Gran Canaria\Doctorado\codigo\synthetic_data_generation_framework\AlzheimerBALEA\results"
 
+# Dataset name 
 dataset_name = 'ALZ-BALEA'
 
 # Variables needed to handle dictionaries corresponding to the number of generated data samples  
@@ -676,14 +681,13 @@ augmen1 = "CTGAN"
 augmen2 = "GC"
 
 # Best and worst combinations
-best_worst = ['Borderline + Sep. + GC', 'NC + CTGAN'] 
+best_worst = ['Borderline + Sep. + GC', 'NC + CTGAN'] # might be wrong
 
 # Best combination
-best_method = 'Borderline + Sep. + GC'
+best_method = 'Borderline + Sep. + GC' # might be wrong
 
-# Name of the used Machine Learning models 
+# Name of the used Machine Learning models and associated colors 
 models = ['SVM','RF', 'XGB', 'KNN']
-
 model_colors = ['b','r','k','g']
 
 # Studied metrics
