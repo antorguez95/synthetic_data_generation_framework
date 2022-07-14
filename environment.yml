@@ -1,4 +1,4 @@
-name: SDG
+name: SDG_env
 channels:
   - defaults
   - conda-forge
