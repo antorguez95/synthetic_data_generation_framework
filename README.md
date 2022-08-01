@@ -58,7 +58,7 @@ Once the results have been already generated, one can visualize some figures aft
 - Install it. 
 - Comment every line that contains  `plt.style.use(['science','ieee'])`  within the code. 
 
-The choice of the dataset to be analyzed must be done inside the `gen_and_save.py` file for now, as indicated in the comments of such file. Changes will be introduced to input the parameters from the terminal. Afterwards, execute this line from the main folder:
+The choice of the dataset to be analyzed must be done inside the `gen_and_save.py` file for now, as indicated in the comments of such file. Specifically, `STUDIED_DATABASE` variable must be properly set. Changes will be introduced to input the parameters from the terminal. Afterwards, execute this line from the main folder:
  
     python gen_and_save_figs.py
   
