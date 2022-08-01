@@ -46,7 +46,7 @@ where [`environment.yml`](environment.yml) contained the name of the installed e
 
 ## How do I run these scripts?
 
-To execute the whole experiment, with the default settings, these are the lines of code you must type in your Python terminal. Changes in the code will be introduced to input the parameters from the terminal
+To execute the whole experiment, with the default settings, these are the lines of code you must type in your Python terminal. Changes in the code will be introduced to input the parameters from the terminal. From the `synthetic_data_generation` folder: 
     
     cd DATASET_FOLDER
     python DATASET_NAME_main.py
