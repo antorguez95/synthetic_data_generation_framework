@@ -64,7 +64,7 @@ The choice of the dataset to be analyzed must be done inside the `gen_and_save.p
   
 ## Generated results
 
-As previously outilined, due to their particularities, each database has its own script. The execution of each of them will generate am `EDA` and `results` folders that contain the initial EDA and the results after data augmentation, respectively. Results are stored as figures, as `.pkl` files and/or as `.txt` files containing the numerical values of the metrics analysed. Please, refer to [our paper](https://www.ulpgc.es/) for further information regarding the studied metrics and obtained results. 
+As previously outlined, due to their particularities, each database has its own script. The execution of each of them will generate am `EDA` and `results` folders that contain the initial EDA and the results after data augmentation, respectively. Results are stored as figures, as `.pkl` files and/or as `.txt` files containing the numerical values of the metrics analysed. Please, refer to [our paper](https://www.ulpgc.es/) for further information regarding the studied metrics and obtained results. 
 
 ## Learn more 
 
