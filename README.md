@@ -29,7 +29,7 @@ Please cite [our paper](https://www.ulpgc.es/) if this framework somehow helped 
 ## Set up before running this code
 1. Install [conda](https://docs.conda.io/en/latest/) package manager.
 2. Clone this repository.
-3. Enter the 'synthetic_data_generation' directory 
+3. Enter the `synthetic_data_generation` directory 
 4. Create the environment by running:
 
     ```
