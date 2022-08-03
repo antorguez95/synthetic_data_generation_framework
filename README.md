@@ -41,8 +41,9 @@ Please cite [our paper](https://www.ulpgc.es/) if this framework somehow helped 
     ```
     conda activate SGD
     ```
+ 6. Download the databases and set the `DATASET_PATH` in all `datasetname_main.py` files according to your own path. Check also that `filename` variable      contains the actual file name of the database.  
 
-where [`environment.yml`](environment.yml) contained the name of the installed environment, the installed libraries and the channel used to download such libraries.
+where [`environment.yml`](environment.yml) contained the name of the installed environment, the installed libraries and the channel used to download such libraries, and `datasetname` corresponds to the abovementioned datasets names. 
 
 ## How do I run these scripts?
 
