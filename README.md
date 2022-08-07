@@ -9,7 +9,7 @@ There are 8 folders, one for each `database`. Inside each folder there are two f
 
 `results` folders contain the most relevant results, most of them published in [our work](https://www.ulpgc.es/). Further executions of this code will overwrite the original results if neither the folder nor the file names are properly changed within the code. `EDA` folders has not been included yet, even they are generated when executing this code, since some errors arise when dealing with categorical variables. With `PIMA` and `SACardio` databases Exploratory Data Analysis (EDA) functions work because these datasets do not contain categorical variables. 
 
-Obtained results demonstrate that, using [CTGAN](https://arxiv.org/abs/1907.00503) and a Gaussian Copula available at the [SDV library](https://sdv.dev/SDV/), classification performances can be perfectly maintained, and even improved in some cases. Further research must be done in this line, yet the results presented in [our work](https://www.ulpgc.es/) are promising. 
+Obtained results demonstrate that, using [CTGAN](https://arxiv.org/abs/1907.00503) and a Gaussian Copula available at the [SDV library](https://sdv.dev/SDV/), classification performances can be perfectly maintained, and even improved in some cases. Further research must be done in this line, yet the results presented in [our work](https://www.ulpgc.es/](https://ieeexplore.ieee.org/document/9851514) are promising. 
 
 Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this framework somehow helped you in your research and/or development work, or if you used this piece of code. 
 
