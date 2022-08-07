@@ -3,7 +3,7 @@
 ## What's in this repository?
 
 This repository contains the code of our published work in the [IEEE Journal of Biomedical and Health Informatics](https://www.embs.org/jbhi/): [*"Synthetic Patient Data Generation and 
-Evaluation in Disease Prediction Using Small and Imbalanced Datasets"*](https://www.ulpgc.es/). The main objective of this work was to demonstrate the feasibility of the employment of synthetic data to train Machine Learning models validated with real medical tabular data for classification tasks. This, without harming the statistical properties of the original data. With this goal, an in-depth analysis of the relationship between the amount of synthetic data samples, classification performance, and statistical similarity metrics was performed. 
+Evaluation in Disease Prediction Using Small and Imbalanced Datasets"*](https://ieeexplore.ieee.org/document/9851514). The main objective of this work was to demonstrate the feasibility of the employment of synthetic data to train Machine Learning models validated with real medical tabular data for classification tasks. This, without harming the statistical properties of the original data. With this goal, an in-depth analysis of the relationship between the amount of synthetic data samples, classification performance, and statistical similarity metrics was performed. 
 
 There are 8 folders, one for each `database`. Inside each folder there are two files: `database_utils.py` and `database_main.py` (being `database` the correspondant name for each database. The former contains constants and custom functions developed uniquely for that database. The latter contains the most important part of this work; the script with the framework itself. One script has been developed for each database due to the heterogeneity and particularities of all databases. The arguments/parameters of every script are on the top of them. Notice that, with the default parameters (`bal_iterations = 100`, `aug_iterations = 10`), and the current grid of Machine Learning models parameters (see `svm_params`, `rf_params`, `xgb_params`, `knn_params` variables) execution time can last from around 6 hours to nearly a day, depending on the database. Reduction of iterations and/or grid parameters will reduce the execution time.
 
@@ -11,7 +11,7 @@ There are 8 folders, one for each `database`. Inside each folder there are two f
 
 Obtained results demonstrate that, using [CTGAN](https://arxiv.org/abs/1907.00503) and a Gaussian Copula available at the [SDV library](https://sdv.dev/SDV/), classification performances can be perfectly maintained, and even improved in some cases. Further research must be done in this line, yet the results presented in [our work](https://www.ulpgc.es/) are promising. 
 
-Please cite [our paper](https://www.ulpgc.es/) if this framework somehow helped you in your research and/or development work, or if you used this piece of code. 
+Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this framework somehow helped you in your research and/or development work, or if you used this piece of code. 
 
 ## Datasets Availability 
 
@@ -65,10 +65,10 @@ The choice of the dataset to be analyzed must be done inside the `gen_and_save.p
   
 ## Generated results
 
-As previously outlined, due to their particularities, each database has its own script. The execution of each of them will generate an `EDA` and `results` folders that contain the initial EDA and the results after data augmentation, respectively. Results are stored as figures, as `.pkl` files and/or as `.txt` files containing the numerical values of the metrics analysed. Please, refer to [our paper](https://www.ulpgc.es/) for further information regarding the studied metrics and obtained results. 
+As previously outlined, due to their particularities, each database has its own script. The execution of each of them will generate an `EDA` and `results` folders that contain the initial EDA and the results after data augmentation, respectively. Results are stored as figures, as `.pkl` files and/or as `.txt` files containing the numerical values of the metrics analysed. Please, refer to [our paper](https://ieeexplore.ieee.org/document/9851514) for further information regarding the studied metrics and obtained results. 
 
 ## Learn more 
 
-For any other questions related with the code or the [synthetic data framework](https://www.ulpgc.es/) itself, you can post an issue on this repository or contact me via email.
+For any other questions related with the code or the [synthetic data framework](https://ieeexplore.ieee.org/document/9851514) itself, you can post an issue on this repository or contact me via email.
 
 
