@@ -11,26 +11,9 @@ There are 8 folders, one for each `database`. Inside each folder there are two f
 
 Obtained results demonstrate that, using [CTGAN](https://arxiv.org/abs/1907.00503) and a Gaussian Copula available at the [SDV library](https://sdv.dev/SDV/), classification performances can be perfectly maintained, and even improved in some cases. Further research must be done in this line, yet the results presented in [our work](https://ieeexplore.ieee.org/document/9851514) are promising. 
 
-Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this framework somehow helped you in your research and/or development work, or if you used this piece of code. The BibTex citation is below: 
+Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this framework somehow helped you in your research and/or development work, or if you used this piece of code: 
 
-`@ARTICLE{9851514,
-
-  author={Rodriguez-Almeida, Antonio J. and Fabelo, Himar and Ortega, Samuel and Deniz, Alejandro and Balea-Fernandez, Francisco J. and Quevedo, Eduardo and Soguero-Ruiz, Cristina and W&#x00E4;gner, Ana M. and Callico, Gustavo M.},
-
-  journal={IEEE Journal of Biomedical and Health Informatics}, 
-
-  title={Synthetic Patient Data Generation and Evaluation in Disease Prediction Using Small and Imbalanced Datasets}, 
-
-  year={2022},
-
-  volume={},
-
-  number={},
-
-  pages={1-12},
-
-  doi={10.1109/JBHI.2022.3196697}}
-`
+A. J. Rodriguez-Almeida et al., "Synthetic Patient Data Generation and Evaluation in Disease Prediction Using Small and Imbalanced Datasets," in IEEE Journal of Biomedical and Health Informatics, 2022, doi: 10.1109/JBHI.2022.3196697.
 
 ## Datasets Availability 
 
