@@ -13,7 +13,7 @@ Obtained results demonstrate that, using [CTGAN](https://arxiv.org/abs/1907.0050
 
 Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this framework somehow helped you in your research and/or development work, or if you used this piece of code: 
 
-A. J. Rodriguez-Almeida et al., "Synthetic Patient Data Generation and Evaluation in Disease Prediction Using Small and Imbalanced Datasets," in IEEE Journal of Biomedical and Health Informatics, 2022, doi: 10.1109/JBHI.2022.3196697.
+*A. J. Rodriguez-Almeida et al., "Synthetic Patient Data Generation and Evaluation in Disease Prediction Using Small and Imbalanced Datasets," in IEEE Journal of Biomedical and Health Informatics, 2022, doi: 10.1109/JBHI.2022.3196697.*
 
 ## Datasets Availability 
 
