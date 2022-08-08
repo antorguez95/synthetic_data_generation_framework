@@ -43,8 +43,9 @@ Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this fr
     ```
     conda activate SGD
     ```
- 6. Install the required packages. Solutions like `requirements.txt' or `environments.yml` has been tested but `sdv` package show conflicts due to cross-dependencies. So, packages sould be installed manually. Notice that the installed version is not the most recent one, but the one that has been employed to develop and test this framework. In your terminal run: 
+ 6. Install the required packages. Solutions like `requirements.txt' or `environments.yml` has been tested but `sdv` package show conflicts due to cross-dependencies. So, packages sould be installed manually. Notice that the installed version is not the most recent one, but the one that has been employed to develop and test this framework. In your terminal run (one line by one): 
     
+    ```
     conda install scikit-learn=1.0.2
     conda install pandas=1.1.3
     conda install numpy=1.21.5
@@ -52,6 +53,7 @@ Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this fr
     conda install matplotlib=3.5.2
     conda install -c pytorch -c conda-forge sdv=0.14.1
     conda install openpyxl=3.0.9
+    ``` 
  
  8. Download the databases and set the `DATASET_PATH` in all `datasetname_main.py` files according to your own path. Check also that `filename` variable      contains the actual file name of the database. Finally, set the `DICT_PATH` variable in all `datasetname_utils.py` to store the dictionaries that contain the results properly. 
 
