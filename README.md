@@ -32,7 +32,7 @@ Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this fr
 1. Install [conda](https://docs.conda.io/en/latest/) package manager.
 2. Clone this repository.
 3. Enter the `synthetic_data_generation` directory 
-4. Create the environment by running:
+4. Create the environment with the proper Python version by running:
 
     ```
     conda create -n SDG python=3.8.13
@@ -43,7 +43,7 @@ Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this fr
     ```
     conda activate SGD
     ```
- 6. Install the required packages. Solutions like `requirements.txt` or `environments.yml` has been tested but `sdv` package show conflicts due to cross-dependencies with other libraries. So, packages sould be installed manually. Notice that the installed version is not the most recent one, but the one that has been employed to develop and test this framework. In your terminal run (one line by one): 
+ 6. Install the required packages. Solutions for this using `requirements.txt` or `environments.yml` has been tested but `sdv` package show conflicts due to cross-dependencies with other libraries. So, packages sould be installed manually. Notice that the installed versions are not the most recent ones, but the ones that have been employed to develop and test this framework. In your terminal run (one line by one): 
     
     ```
     conda install scikit-learn=1.0.2
