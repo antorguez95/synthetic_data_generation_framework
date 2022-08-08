@@ -43,7 +43,7 @@ Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this fr
     ```
     conda activate SGD
     ```
- 6. Install the required packages. Solutions like `requirements.txt' or `environments.yml` has been tested but `sdv` package show conflicts due to cross-dependencies. So, packages sould be installed manually. Notice that the installed version is not the most recent one, but the one that has been employed to develop and test this framework. In your terminal run (one line by one): 
+ 6. Install the required packages. Solutions like `requirements.txt` or `environments.yml` has been tested but `sdv` package show conflicts due to cross-dependencies with other libraries. So, packages sould be installed manually. Notice that the installed version is not the most recent one, but the one that has been employed to develop and test this framework. In your terminal run (one line by one): 
     
     ```
     conda install scikit-learn=1.0.2
