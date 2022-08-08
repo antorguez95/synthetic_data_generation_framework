@@ -5,7 +5,7 @@
 This repository contains the code of our published work in the [IEEE Journal of Biomedical and Health Informatics](https://www.embs.org/jbhi/): [*"Synthetic Patient Data Generation and 
 Evaluation in Disease Prediction Using Small and Imbalanced Datasets"*](https://ieeexplore.ieee.org/document/9851514). The main objective of this work was to demonstrate the feasibility of the employment of synthetic data to train Machine Learning models validated with real medical tabular data for classification tasks. This, without harming the statistical properties of the original data. With this goal, an in-depth analysis of the relationship between the amount of synthetic data samples, classification performance, and statistical similarity metrics was performed. 
 
-There are 8 folders, one for each `database`. Inside each folder there are two files: `database_utils.py` and `database_main.py` (being `database` the correspondant name for each database. The former contains constants and custom functions developed uniquely for that database. The latter contains the most important part of this work; the script with the framework itself. One script has been developed for each database due to the heterogeneity and particularities of all databases. The arguments/parameters of every script are on the top of them. Notice that, with the default parameters (`bal_iterations = 100`, `aug_iterations = 10`), and the current grid of Machine Learning models parameters (see `svm_params`, `rf_params`, `xgb_params`, `knn_params` variables) execution time can last from around 6 hours to nearly a day, depending on the database. Reduction of iterations and/or grid parameters will reduce the execution time.
+There are 8 folders, one for each `database`. Inside each folder there are two files: `database_utils.py` and `database_main.py` (being `database` the correspondant name for each database). The former contains constants and custom functions developed uniquely for that database. The latter contains the most important part of this work; the script with the framework itself. One script has been developed for each database due to the heterogeneity and particularities of all databases. The arguments/parameters of every script are on the top of them. Notice that, with the default parameters (`bal_iterations = 100`, `aug_iterations = 10`), and the current grid of Machine Learning models parameters (see `svm_params`, `rf_params`, `xgb_params`, `knn_params` variables) execution time can last from around 6 hours to nearly a day, depending on the database. Reduction of iterations and/or grid parameters will reduce the execution time.
 
 `results` folders contain the most relevant results, most of them published in [our work](https://ieeexplore.ieee.org/document/9851514). Further executions of this code will overwrite the original results if neither the folder nor the file names are properly changed within the code. `EDA` folders has not been included yet, even they are generated when executing this code, since some errors arise when dealing with categorical variables. With `PIMA` and `SACardio` databases Exploratory Data Analysis (EDA) functions work because these datasets do not contain categorical variables. 
 
@@ -35,7 +35,7 @@ Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this fr
 4. Create the environment by running:
 
     ```
-    conda env create -f environment.yml -n SGD
+    conda create -n SDG python=3.8.13
     ```
    
  5. Activate the already installed envirionment by running: 
@@ -43,7 +43,17 @@ Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this fr
     ```
     conda activate SGD
     ```
- 6. Download the databases and set the `DATASET_PATH` in all `datasetname_main.py` files according to your own path. Check also that `filename` variable      contains the actual file name of the database. Finally, set the `DICT_PATH` variable in all `datasetname_utils.py` to store the dictionaries that contain the results properly. 
+ 6. Install the required packages. Solutions like `requirements.txt' or `environments.yml` has been tested but `sdv` package show conflicts due to cross-dependencies. So, packages sould be installed manually. Notice that the installed version is not the most recent one, but the one that has been employed to develop and test this framework. In your terminal run: 
+    
+    conda install scikit-learn=1.0.2
+    conda install pandas=1.1.3
+    conda install numpy=1.21.5
+    conda install -c conda-forge imbalanced-learn=0.7.0
+    conda install matplotlib=3.5.2
+    conda install -c pytorch -c conda-forge sdv=0.14.1
+    conda install openpyxl=3.0.9
+ 
+ 8. Download the databases and set the `DATASET_PATH` in all `datasetname_main.py` files according to your own path. Check also that `filename` variable      contains the actual file name of the database. Finally, set the `DICT_PATH` variable in all `datasetname_utils.py` to store the dictionaries that contain the results properly. 
 
 where [`environment.yml`](environment.yml) contained the name of the installed environment, the installed libraries and the channel used to download such libraries, and `datasetname` corresponds to the abovementioned datasets names. 
 
