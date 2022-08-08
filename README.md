@@ -43,7 +43,7 @@ Please cite [our paper](https://ieeexplore.ieee.org/document/9851514) if this fr
     ```
     conda activate SGD
     ```
- 6. Download the databases and set the `DATASET_PATH` in all `datasetname_main.py` files according to your own path. Check also that `filename` variable      contains the actual file name of the database.  
+ 6. Download the databases and set the `DATASET_PATH` in all `datasetname_main.py` files according to your own path. Check also that `filename` variable      contains the actual file name of the database. Finally, set the `DICT_PATH` variable in all `datasetname_utils.py` to store the dictionaries that contain the results properly. 
 
 where [`environment.yml`](environment.yml) contained the name of the installed environment, the installed libraries and the channel used to download such libraries, and `datasetname` corresponds to the abovementioned datasets names. 
 
