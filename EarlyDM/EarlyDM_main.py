@@ -33,7 +33,7 @@ from imblearn.over_sampling import SMOTE, ADASYN, SMOTENC, KMeansSMOTE, SVMSMOTE
 
 from EarlyDM_utils import *
 
-from exploratory_data_analysys import *
+from exploratory_data_analysis import *
 
 from sdg_utils import * 
 
