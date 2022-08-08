@@ -315,8 +315,8 @@ balance2_ratio = (data_balance2[y_tag][data_balance2[y_tag] == 1].value_counts()
 # Models' training with the original training sets without synthetic samples 
 SVM_model, SVM_train_results, SVM_cv_results  = model_train(svm_model, svm_params, "SVM", "No synthetic", X_train_norm, y_train_norm, cv = 10, scoring = 'f1')
 rf_model, rf_train_results, rf_cv_results  = model_train(rf_model, rf_params, "RF", "No synthetic", X_train_norm, y_train_norm, cv = 10, scoring = 'f1')
-xgb_model, xgb_train_results, xgb_cv_results  = model_train(xgb_model, xgb_params, "SVM", "No synthetic", X_train_norm, y_train_norm, cv = 10, scoring = 'f1')
-knn_model, knn_train_results, knn_cv_results  = model_train(knn_model, knn_params, "SVM", "No synthetic", X_train_norm, y_train_norm, cv = 10, scoring = 'f1')
+xgb_model, xgb_train_results, xgb_cv_results  = model_train(xgb_model, xgb_params, "XGB", "No synthetic", X_train_norm, y_train_norm, cv = 10, scoring = 'f1')
+knn_model, knn_train_results, knn_cv_results  = model_train(knn_model, knn_params, "KNN", "No synthetic", X_train_norm, y_train_norm, cv = 10, scoring = 'f1')
 
 # Models' evaluation with the original training sets without synthetic samples
 SVM_acc_nosynth, SVM_auc_nosynth, SVM_f1_nosynth = acc_auc_roc_SVM(SVM_model, X_val_norm, y_val_norm)

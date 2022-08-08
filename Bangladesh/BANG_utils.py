@@ -131,8 +131,8 @@ def prepare_BANG(dataset_path : str = "", filename : str = "") -> Tuple[pd.DataF
     
     return data, X, Y, cols_names, y_tag
 
-def numerical_conversion(data : np.array, features : str, y_col : str) -> Tuple(pd.DataFrame, 
-                        pd.DataFrame, pd.DataFrame) :
+def numerical_conversion(data : np.array, features : str, y_col : str) -> Tuple[pd.DataFrame, 
+                        pd.DataFrame, pd.DataFrame] :
     """Fix all Bangladesh database features data types to its original type after KNNImputer is used,
     since this functions returns only a floating points ndarray. For more, check sklearn 
     documentation of this function at
