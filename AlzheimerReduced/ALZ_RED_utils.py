@@ -28,8 +28,8 @@ from sklearn.preprocessing import OneHotEncoder
 
 from typing import Tuple, List 
 
-def prepare_ALZ_RED(dataset_path : str = "", filename1 : str = "", filename2 : str = "") -> Tuple(
-    pd.DataFrame, pd.DataFrame, pd.DataFrame, List, str) :
+def prepare_ALZ_RED(dataset_path : str = "", filename1 : str = "", filename2 : str = "") -> Tuple[
+    pd.DataFrame, pd.DataFrame, pd.DataFrame, List, str] :
     """Read the Alzheimer-Balea-Reduced dataset from a .xlsx file and suit it to be processed 
     as a pd.DataFrame. It returns tha dataset dataframe and strings associated to 
     it to easy its management.
@@ -103,8 +103,8 @@ def prepare_ALZ_RED(dataset_path : str = "", filename1 : str = "", filename2 : s
     
     return data, X, Y, cols_names, y_tag
 
-def numerical_conversion(data : np.array, features : str, y_col : str) -> Tuple(pd.DataFrame, 
-    pd.DataFrame, pd.DataFrame) :
+def numerical_conversion(data : np.array, features : str, y_col : str) -> Tuple[pd.DataFrame, 
+    pd.DataFrame, pd.DataFrame] :
     """Fix all Alzheimer-Balea Reduced database features data types to its original type
     after KNNImputer is used, since this functions returns only a floating points ndarray.
     For more, check sklearn documentation of this function at
