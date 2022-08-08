@@ -1,9 +1,0 @@
-scikit-learn
-pandas
-numpy
-scipy
-imbalanced-learn 
-matplotlib
-openpyxl
-seaborn
-sdv 
